@@ -1,0 +1,6 @@
+[submodule "godot-cpp"]
+	path = godot-cpp
+	url = git@github.com:godotengine/godot-cpp.git
+[submodule "libpd"]
+	path = libpd
+	url = git@github.com:libpd/libpd.git
