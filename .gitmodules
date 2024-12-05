@@ -4,3 +4,6 @@
 [submodule "libpd"]
 	path = libpd
 	url = git@github.com:libpd/libpd.git
+[submodule "puredata-extension-demo"]
+	path = puredata-extension-demo
+	url = git@github.com:kureta/puredata-extension-demo.git
