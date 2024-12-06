@@ -1,0 +1,10 @@
+[gd_scene load_steps=2 format=3 uid="uid://cd6n3x3rx7yhb"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_unap2"]
+
+[node name="Main" type="Node2D"]
+
+[node name="PureDataGD" type="PureDataGD" parent="."]
+position = Vector2(13.5924, 19.6226)
+scale = Vector2(10, 10)
+texture = SubResource("PlaceholderTexture2D_unap2")

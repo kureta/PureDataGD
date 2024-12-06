@@ -14,6 +14,9 @@ configure:
 build: configure
 	$(MAKE) -j8 -C $(BUILD_DIR)
 
+install: build
+	cp $(BUILD_DIR)/libPureDataGD.so ./demo/bin/
+
 # Clean the build directory
 clean:
 	rm -rf $(BUILD_DIR)
