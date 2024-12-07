@@ -65,8 +65,6 @@ install(TARGETS PureDataGD DESTINATION bin)
 set(GODOT_PRECISION "double" CACHE STRING "Precision used in Godot" FORCE)
 set(GODOT_USE_HOT_RELOAD ON CACHE STRING "Enable hot  reloading" FORCE)
 set(LIBPD_SHARED OFF CACHE STRING "Build libpd as a shared library" FORCE)
-set(CMAKE_EXPORT_COMPILE_COMMANDS ON
-  CACHE STRING "Export compile commands" FORCE)
 set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/demo
   CACHE STRING "Install prefix" FORCE)

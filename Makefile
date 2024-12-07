@@ -12,7 +12,8 @@ all: configure build install
 configure: $(BUILD_DIR)/Makefile
 $(BUILD_DIR)/Makefile: CMakeLists.txt
 	mkdir -p $(BUILD_DIR)
-	cmake -S $(SOURCE_DIR) -B $(BUILD_DIR)
+	cmake -S $(SOURCE_DIR) -B $(BUILD_DIR) \
+		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON
 
 # Build the project
 build: $(BUILD_DIR)/$(OUTPUT_ARTIFACT)
