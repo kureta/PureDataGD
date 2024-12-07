@@ -1,7 +1,4 @@
 #include "puredatagd.h"
-#include "PdTypes.hpp"
-#include "z_libpd.h"
-#include <PdBase.hpp>
 #include <godot_cpp/classes/audio_stream_generator_playback.hpp>
 #include <godot_cpp/core/class_db.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
@@ -13,34 +10,23 @@ void PureDataGD::_bind_methods() {}
 PureDataGD::PureDataGD() {
   UtilityFunctions::print("PureDataGD constructor");
 
-  // Initialize the PdBase object.
-  pd::PdBase pd;
-  pd::Patch patch = pd.openPatch("bin/test.pd", ".");
+  pd.openPatch("test.pd", "./bin");
 
-  if (::libpd_init() == 0) {
-    UtilityFunctions::print("Initialized PureData");
-  } else {
+  if (!initialized) {
+    initialized = pd.init(1, 2, 44100);
+    if (initialized) {
+      UtilityFunctions::print("Initialized PureData.");
+    } else {
+      UtilityFunctions::print("Failed to initialize PureData!");
+    }
   }
 
-  if (::libpd_init_audio(1, 2, 44100) == 0) {
-    UtilityFunctions::print("Initialized DSP");
-  } else {
-    return;
-  }
-
-  initialized_ = true;
-
-  handle_ = ::libpd_openfile("test.pd", "./bin");
-  if (handle_ == nullptr) {
-    UtilityFunctions::print("Error opening patch");
-  } else {
-    UtilityFunctions::print("Opened patch");
-  }
+  pd.computeAudio(true);
 }
 
 PureDataGD::~PureDataGD() {
   UtilityFunctions::print("PureDataGD destructor");
-  ::libpd_closefile(handle_);
+  pd.closePatch(patch);
 }
 
 void PureDataGD::_process(double delta) {
@@ -49,9 +35,9 @@ void PureDataGD::_process(double delta) {
     if (p.is_valid()) {
       int nframes = std::min(p->get_frames_available(), 2048);
 
-      int ticks = nframes / libpd_blocksize();
+      int ticks = nframes / pd.blockSize();
 
-      if (::libpd_process_float(ticks, inbuf_, outbuf_) != 0) {
+      if (!pd.processFloat(ticks, inbuf_.data(), outbuf_.data())) {
         return;
       }
 
