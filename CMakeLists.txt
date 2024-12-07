@@ -28,9 +28,6 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(libpd)
 
 # ====== Setup build ======
-# Specify the build type if necessary
-set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type" FORCE)
-
 # List all source files
 set(SOURCES
   src/puredatagd.cpp
@@ -39,6 +36,12 @@ set(SOURCES
 
 # Add PureDataGD library and specify its sources
 add_library(PureDataGD SHARED ${SOURCES})
+
+set_target_properties(
+  PureDataGD
+  PROPERTIES
+  CXX_STANDARD 17
+  CXX_STANDARD_REQUIRED ON)
 
 # Include directories for godot-cpp
 target_include_directories(PureDataGD PRIVATE
@@ -54,14 +57,9 @@ target_include_directories(PureDataGD PRIVATE
 
 # Link against godot-cpp
 target_link_libraries(PureDataGD PRIVATE godot-cpp)
+
 # Add the `libpd` library to your target
 target_link_libraries(PureDataGD PRIVATE libpd)
 
-# Define export macro and set C++ standard
-target_compile_definitions(PureDataGD PRIVATE GODOT_CPP_EXPORT)
-target_compile_features(PureDataGD PRIVATE cxx_std_17)
-
-# Ensure build order: PureDataGD depends on godot-cpp
-add_dependencies(PureDataGD godot-cpp)
-# Ensure build order: PureDataGD depends on libpd
-add_dependencies(PureDataGD libpd)
+# Add install target
+install(TARGETS PureDataGD DESTINATION bin)
