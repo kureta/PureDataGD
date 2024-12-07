@@ -1,10 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://cd6n3x3rx7yhb"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_unap2"]
+[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_rg4w2"]
 
 [node name="Main" type="Node2D"]
 
 [node name="PureDataGD" type="PureDataGD" parent="."]
-position = Vector2(19.2242, 3.63408)
-scale = Vector2(10, 10)
-texture = SubResource("PlaceholderTexture2D_unap2")
+stream = SubResource("AudioStreamGenerator_rg4w2")
