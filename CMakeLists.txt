@@ -12,7 +12,6 @@ FetchContent_Declare(
   godot-cpp
   GIT_REPOSITORY https://github.com/godotengine/godot-cpp.git
   GIT_TAG 4.3  # Use the appropriate branch or tag matching your Godot version
-  GIT_SUBMODULES ""  # Ensure submodules are fetched
 )
 
 # Fetch and make godot-cpp available
@@ -51,7 +50,9 @@ target_include_directories(PureDataGD PRIVATE
 
 # Include directories for libpd
 target_include_directories(PureDataGD PRIVATE
+  ${libpd_SOURCE_DIR}/cpp
   ${libpd_SOURCE_DIR}/libpd_wrapper
+  ${libpd_SOURCE_DIR}/libpd_wrapper/util
   ${libpd_SOURCE_DIR}/pure-data/src
 )
 
@@ -59,7 +60,7 @@ target_include_directories(PureDataGD PRIVATE
 target_link_libraries(PureDataGD PRIVATE godot-cpp)
 
 # Add the `libpd` library to your target
-target_link_libraries(PureDataGD PRIVATE libpd)
+target_link_libraries(PureDataGD PRIVATE libpd_static)
 
 # Add install target
 install(TARGETS PureDataGD DESTINATION bin)
