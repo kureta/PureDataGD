@@ -12,13 +12,7 @@ all: configure build install
 configure: $(BUILD_DIR)/Makefile
 $(BUILD_DIR)/Makefile: CMakeLists.txt
 	mkdir -p $(BUILD_DIR)
-	cmake -S $(SOURCE_DIR) -B $(BUILD_DIR) \
-		-DCMAKE_EXPORT_COMPILE_COMMANDS=ON \
-		-DCMAKE_BUILD_TYPE=Debug \
-		-DGODOT_PRECISION=double \
-		-DGODOT_USE_HOT_RELOAD=ON \
-		-DCMAKE_INSTALL_PREFIX=$(SOURCE_DIR)/demo \
-		-DLIBPD_SHARED=OFF
+	cmake -S $(SOURCE_DIR) -B $(BUILD_DIR)
 
 # Build the project
 build: $(BUILD_DIR)/$(OUTPUT_ARTIFACT)

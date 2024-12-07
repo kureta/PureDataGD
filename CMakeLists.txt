@@ -13,7 +13,6 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/godotengine/godot-cpp.git
   GIT_TAG 4.3  # Use the appropriate branch or tag matching your Godot version
 )
-
 # Fetch and make godot-cpp available
 FetchContent_MakeAvailable(godot-cpp)
 
@@ -23,31 +22,28 @@ FetchContent_Declare(
   GIT_REPOSITORY https://github.com/libpd/libpd.git
   GIT_TAG master # Use an appropriate tag or branch
 )
-
 FetchContent_MakeAvailable(libpd)
 
-# ====== Setup build ======
-# List all source files
+# ====== Define and setup the target ======
+# Specify the source files
 set(SOURCES
   src/puredatagd.cpp
   src/register_types.cpp
 )
-
-# Add PureDataGD library and specify its sources
+# Add PureDataGD target
 add_library(PureDataGD SHARED ${SOURCES})
-
-set_target_properties(
-  PureDataGD
-  PROPERTIES
+# Set the C++ standard to C++17
+set_target_properties(PureDataGD PROPERTIES
   CXX_STANDARD 17
-  CXX_STANDARD_REQUIRED ON)
+  CXX_STANDARD_REQUIRED ON
+)
 
+# ===== Include directories =====
 # Include directories for godot-cpp
 target_include_directories(PureDataGD PRIVATE
   ${godot-cpp_SOURCE_DIR}/include
   ${godot-cpp_BINARY_DIR}/include
 )
-
 # Include directories for libpd
 target_include_directories(PureDataGD PRIVATE
   ${libpd_SOURCE_DIR}/cpp
@@ -56,11 +52,21 @@ target_include_directories(PureDataGD PRIVATE
   ${libpd_SOURCE_DIR}/pure-data/src
 )
 
+# ===== Link libraries =====
 # Link against godot-cpp
 target_link_libraries(PureDataGD PRIVATE godot-cpp)
-
 # Add the `libpd` library to your target
 target_link_libraries(PureDataGD PRIVATE libpd_static)
 
 # Add install target
 install(TARGETS PureDataGD DESTINATION bin)
+
+# ====== Configure the project defaults ======
+set(GODOT_PRECISION "double" CACHE STRING "Precision used in Godot" FORCE)
+set(GODOT_USE_HOT_RELOAD ON CACHE STRING "Enable hot  reloading" FORCE)
+set(LIBPD_SHARED OFF CACHE STRING "Build libpd as a shared library" FORCE)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON
+  CACHE STRING "Export compile commands" FORCE)
+set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
+set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/demo
+  CACHE STRING "Install prefix" FORCE)
