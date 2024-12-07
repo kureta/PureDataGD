@@ -10,10 +10,6 @@ PureDataGD::PureDataGD() {
   time_passed = 0.0;
 }
 
-PureDataGD::~PureDataGD() {
-  // Add your cleanup here.
-}
-
 void PureDataGD::_process(double delta) {
   time_passed += delta;
 

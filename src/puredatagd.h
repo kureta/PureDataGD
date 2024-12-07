@@ -6,6 +6,7 @@
 namespace godot {
 
 class PureDataGD : public Sprite2D {
+  // NOLINTNEXTLINE(modernize-use-auto)
   GDCLASS(PureDataGD, Sprite2D)
 
 private:
@@ -16,7 +17,7 @@ protected:
 
 public:
   PureDataGD();
-  ~PureDataGD();
+  ~PureDataGD() override = default;
 
   void _process(double delta) override;
   void _notification(int p_notification) {
