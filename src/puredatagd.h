@@ -22,6 +22,7 @@ private:
   String patch_path{};
   void init();
   void load_patch();
+  float freq = 440.0;
 
 protected:
   static void _bind_methods();
@@ -30,11 +31,20 @@ public:
   PureDataGD();
   ~PureDataGD() override;
 
-  void _process(double delta) override;
-  void set_patch_path(const String path);
+  // Send PureData buffer to Godot
+  void _process(const double delta) override;
+
+  // Patch path
   String get_patch_path();
-  void set_dsp_on(const bool status);
+  void set_patch_path(const String path);
+
+  // DSP On/Off
   bool get_dsp_on();
+  void set_dsp_on(const bool status);
+
+  // Osc Frequency
+  double get_freq();
+  void set_freq(const float f);
 };
 
 } // namespace godot

@@ -1,8 +1,21 @@
-[gd_scene load_steps=2 format=3 uid="uid://cd6n3x3rx7yhb"]
+[gd_scene load_steps=5 format=3 uid="uid://cd6n3x3rx7yhb"]
 
-[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_girov"]
+[ext_resource type="Script" path="res://main.gd" id="1_dw76o"]
+[ext_resource type="Script" path="res://sprite_2d.gd" id="2_1jgky"]
+
+[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_5o21e"]
+
+[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_fhb7f"]
+size = Vector2(64, 64)
 
 [node name="Main" type="Node2D"]
+script = ExtResource("1_dw76o")
 
 [node name="PureDataGD" type="PureDataGD" parent="."]
-stream = SubResource("AudioStreamGenerator_girov")
+patch_path = "res://patches/test-2.pd"
+dsp_on = true
+stream = SubResource("AudioStreamGenerator_5o21e")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = SubResource("PlaceholderTexture2D_fhb7f")
+script = ExtResource("2_1jgky")

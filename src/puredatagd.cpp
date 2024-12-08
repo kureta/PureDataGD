@@ -13,20 +13,31 @@ using namespace godot;
 
 // Define things that will be called by or seen inside the Godot GUI.
 void PureDataGD::_bind_methods() {
+  // Patch resource path property
   ClassDB::bind_method(D_METHOD("get_patch_path"), &PureDataGD::get_patch_path);
   ClassDB::bind_method(D_METHOD("set_patch_path", "p_patch_path"),
                        &PureDataGD::set_patch_path);
-  ClassDB::bind_method(D_METHOD("get_dsp_on"), &PureDataGD::get_dsp_on);
-  ClassDB::bind_method(D_METHOD("set_dsp_on", "p_dsp_on"),
-                       &PureDataGD::set_dsp_on);
 
   ADD_PROPERTY(
       PropertyInfo(Variant::STRING, "patch_path", PROPERTY_HINT_FILE, "*.pd"),
       "set_patch_path", "get_patch_path");
 
+  // DSP On/Off property
+  ClassDB::bind_method(D_METHOD("get_dsp_on"), &PureDataGD::get_dsp_on);
+  ClassDB::bind_method(D_METHOD("set_dsp_on", "p_dsp_on"),
+                       &PureDataGD::set_dsp_on);
+
   // TODO: conntect DSP on to Playing property of AudioStreamPlayer
-  ADD_PROPERTY(PropertyInfo(Variant::BOOL, "DSP on"), "set_dsp_on",
+  ADD_PROPERTY(PropertyInfo(Variant::BOOL, "dsp_on"), "set_dsp_on",
                "get_dsp_on");
+
+  // Osc Frequency property
+  ClassDB::bind_method(D_METHOD("get_freq"), &PureDataGD::get_freq);
+  ClassDB::bind_method(D_METHOD("set_freq", "p_freq"), &PureDataGD::set_freq);
+
+  ADD_PROPERTY(
+      PropertyInfo(Variant::FLOAT, "freq", PROPERTY_HINT_RANGE, "20,4000,0.5"),
+      "set_freq", "get_freq");
 }
 
 // Convert resource path String to a FileAccess object.
@@ -98,8 +109,15 @@ void PureDataGD::set_patch_path(const String path) {
 
 bool PureDataGD::get_dsp_on() { return dsp_on; }
 void PureDataGD::set_dsp_on(bool status) {
+  UtilityFunctions::print("Setting DSP status to ", status);
   pd.computeAudio(status);
   dsp_on = status;
+}
+
+double PureDataGD::get_freq() { return freq; }
+void PureDataGD::set_freq(const float f) {
+  freq = f;
+  pd.sendFloat("fromGodot", freq);
 }
 
 // This will suffice for a long time. Just runs PD and fills Godot's audio
@@ -112,6 +130,7 @@ void PureDataGD::_process(double delta) {
       int ticks = nframes / pd.blockSize();
 
       if (!pd.processFloat(ticks, inbuf_.data(), outbuf_.data())) {
+        ERR_PRINT("shit hit the fan");
         return;
       }
 
