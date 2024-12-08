@@ -1,8 +1,8 @@
 [gd_scene load_steps=2 format=3 uid="uid://cd6n3x3rx7yhb"]
 
-[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_rg4w2"]
+[sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_girov"]
 
 [node name="Main" type="Node2D"]
 
 [node name="PureDataGD" type="PureDataGD" parent="."]
-stream = SubResource("AudioStreamGenerator_rg4w2")
+stream = SubResource("AudioStreamGenerator_girov")
