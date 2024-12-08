@@ -25,9 +25,6 @@ install: $(SOURCE_DIR)/demo/bin/$(OUTPUT_ARTIFACT)
 $(SOURCE_DIR)/demo/bin/$(OUTPUT_ARTIFACT): $(BUILD_DIR)/$(OUTPUT_ARTIFACT)
 	cmake --install $(BUILD_DIR)
 
-install: build
-	cp $(BUILD_DIR)/libPureDataGD.so ./demo/bin/
-
 # Clean the build directory
 clean:
 	rm -rf $(BUILD_DIR)
