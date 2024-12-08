@@ -62,8 +62,6 @@ target_link_libraries(PureDataGD PRIVATE libpd_static)
 install(TARGETS PureDataGD DESTINATION bin)
 
 # ====== Configure the project defaults ======
-set(CMAKE_BUILD_TYPE Debug CACHE STRING "Build type" FORCE)
-
 set(GODOT_PRECISION "double" CACHE STRING "Precision used in Godot" FORCE)
 set(LIBPD_SHARED OFF CACHE STRING "Build libpd as a shared library" FORCE)
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/demo
