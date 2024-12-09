@@ -14,3 +14,8 @@ config/name="demo"
 run/main_scene="res://main.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 config/icon="res://icon.svg"
+
+[audio]
+
+driver/output_latency=5
+driver/mix_rate=48000

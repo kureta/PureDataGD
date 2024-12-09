@@ -60,7 +60,7 @@ void PureDataGD::init() {
   // I guess there is just one global instance of PureData.
   // We keep track of its initialization state but I don't really understand
   // this part. I guess that's why the other guy implemented a static singleton.
-  if (!pd.init(1, 2, 44100)) {
+  if (!pd.init(1, 2, 48000)) {
     ERR_PRINT("Failed to initialize PureData!");
     return;
   }
