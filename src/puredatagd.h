@@ -15,7 +15,7 @@ class PureDataGD : public AudioStreamPlayer {
 
 private:
   std::array<float, 1> inbuf_;
-  std::array<float, 44100 * 2> outbuf_;
+  std::array<float, 2048 * 2> outbuf_;
   pd::PdBase pd{};
   pd::Patch patch{};
   bool dsp_on = false;
