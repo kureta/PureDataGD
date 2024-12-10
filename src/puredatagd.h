@@ -45,6 +45,9 @@ public:
   // Osc Frequency
   double get_freq();
   void set_freq(const float f);
+
+  // Send float
+  void send_float(const String receiver, const float value);
 };
 
 } // namespace godot

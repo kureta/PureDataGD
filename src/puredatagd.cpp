@@ -38,6 +38,10 @@ void PureDataGD::_bind_methods() {
   ADD_PROPERTY(
       PropertyInfo(Variant::FLOAT, "freq", PROPERTY_HINT_RANGE, "20,4000,0.5"),
       "set_freq", "get_freq");
+
+  // Send float to PureData
+  ClassDB::bind_method(D_METHOD("send_float", "receiver", "float"),
+                       &PureDataGD::send_float);
 }
 
 // Convert resource path String to a FileAccess object.
@@ -118,6 +122,10 @@ double PureDataGD::get_freq() { return freq; }
 void PureDataGD::set_freq(const float f) {
   freq = f;
   pd.sendFloat("fromGodot", freq);
+}
+
+void PureDataGD::send_float(const String receiver, const float value) {
+  pd.sendFloat(receiver.utf8().get_data(), value);
 }
 
 // This will suffice for a long time. Just runs PD and fills Godot's audio
