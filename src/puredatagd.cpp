@@ -9,7 +9,7 @@
 using namespace godot;
 
 // TODO: PdBase object refers to a single static PureData instance.
-// Changing patch does not proprly close the previous patch (maybe).
+// Changing patch does not properly close the previous patch (maybe).
 
 // Define things that will be called by or seen inside the Godot GUI.
 void PureDataGD::_bind_methods() {
@@ -27,7 +27,8 @@ void PureDataGD::_bind_methods() {
   ClassDB::bind_method(D_METHOD("set_dsp_on", "p_dsp_on"),
                        &PureDataGD::set_dsp_on);
 
-  // TODO: conntect DSP on to Playing property of AudioStreamPlayer
+  // TODO: connect DSP on to Playing property of AudioStreamPlayer
+  // This maybe possible in GDScript
   ADD_PROPERTY(PropertyInfo(Variant::BOOL, "dsp_on"), "set_dsp_on",
                "get_dsp_on");
 
