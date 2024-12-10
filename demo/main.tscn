@@ -7,6 +7,8 @@
 size = Vector2(64, 64)
 
 [sub_resource type="AudioStreamGenerator" id="AudioStreamGenerator_fl2m4"]
+mix_rate = 48000.0
+buffer_length = 0.03
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_dw76o")
@@ -17,5 +19,5 @@ script = ExtResource("2_1jgky")
 
 [node name="PureDataGD" type="PureDataGD" parent="."]
 patch_path = "res://patches/test-2.pd"
-freq = 289.0
+freq = 220.0
 stream = SubResource("AudioStreamGenerator_fl2m4")

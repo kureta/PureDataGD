@@ -21,5 +21,4 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	t += delta
-	#$PureDataGD.freq = $Sprite2D.position.y + f - 256
 	$PureDataGD.send_float("fromGodot", $Sprite2D.position.y + f - 256)
