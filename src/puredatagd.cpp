@@ -1,9 +1,6 @@
 #include "puredatagd.h"
 #include <godot_cpp/classes/audio_stream_generator_playback.hpp>
 #include <godot_cpp/classes/file_access.hpp>
-#include <godot_cpp/classes/global_constants.hpp>
-#include <godot_cpp/classes/ref.hpp>
-#include <godot_cpp/core/error_macros.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;

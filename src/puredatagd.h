@@ -3,7 +3,6 @@
 
 #include <PdBase.hpp>
 #include <PdTypes.hpp>
-#include <gdextension_interface.h>
 #include <godot_cpp/classes/audio_stream_player.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 
