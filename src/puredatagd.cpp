@@ -7,20 +7,22 @@ using namespace godot;
 
 // TODO: PdBase object refers to a single static PureData instance.
 // Changing patch does not properly close the previous patch (maybe).
+// TODO: Seems kine I haven't been using the GDExtension interface.
+// TODO: I am extending the wrong class. Should extend AudioStreamGenerator
 
 // Define things that will be called by or seen inside the Godot GUI.
 void PureDataGD::_bind_methods() {
-  // Usage
-  BIND_PROPERTY(STRING, patch_path, PROPERTY_HINT_FILE, "*.pd");
-  BIND_PROPERTY(BOOL, dsp_on, PROPERTY_HINT_NONE, "");
-  BIND_PROPERTY(FLOAT, freq, PROPERTY_HINT_RANGE, "20,4000,0.5");
+  // Properties
+  BIND_PROPERTY(STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
+  BIND_PROPERTY(BOOL, dsp_on, PROPERTY_HINT_NONE, "")
+  BIND_PROPERTY(FLOAT, freq, PROPERTY_HINT_RANGE, "20,4000,0.5")
 
-  // Send float to PureData
-  BIND_METHOD(send_float, "receiver", "float");
+  // Methods
+  BIND_METHOD(send_float, "receiver", "float")
 }
 
 // Convert resource path String to a FileAccess object.
-// NOTE: use `const` if the function does not modify the parameter.
+// TODO: set and get via path_name but store FileAccess object as state.
 Ref<FileAccess> resource_path_to_file(const String &path) {
   Ref<FileAccess> file = FileAccess::open(path, FileAccess::READ);
 
@@ -38,7 +40,8 @@ bool file_exists(const String &path) {
 void PureDataGD::init() {
   // I guess there is just one global instance of PureData.
   // We keep track of its initialization state but I don't really understand
-  // this part. I guess that's why the other guy implemented a static singleton.
+  // this part. I guess that's why the other guy implemented a static
+  // singleton.
   if (!pd.init(1, 2, 48000)) {
     ERR_PRINT("Failed to initialize PureData!");
     return;

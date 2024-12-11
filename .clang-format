@@ -1,0 +1,5 @@
+BasedOnStyle: LLVM
+IndentWidth: 2
+StatementMacros:
+  - "BIND_PROPERTY"
+  - "BIND_METHOD"
