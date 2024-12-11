@@ -10,36 +10,13 @@ using namespace godot;
 
 // Define things that will be called by or seen inside the Godot GUI.
 void PureDataGD::_bind_methods() {
-  // Patch resource path property
-  ClassDB::bind_method(D_METHOD("get_patch_path"), &PureDataGD::get_patch_path);
-  ClassDB::bind_method(D_METHOD("set_patch_path", "p_patch_path"),
-                       &PureDataGD::set_patch_path);
-
-  ADD_PROPERTY(
-      PropertyInfo(Variant::STRING, "patch_path", PROPERTY_HINT_FILE, "*.pd"),
-      "set_patch_path", "get_patch_path");
-
-  // DSP On/Off property
-  ClassDB::bind_method(D_METHOD("get_dsp_on"), &PureDataGD::get_dsp_on);
-  ClassDB::bind_method(D_METHOD("set_dsp_on", "p_dsp_on"),
-                       &PureDataGD::set_dsp_on);
-
-  // TODO: connect DSP on to Playing property of AudioStreamPlayer
-  // This maybe possible in GDScript
-  ADD_PROPERTY(PropertyInfo(Variant::BOOL, "dsp_on"), "set_dsp_on",
-               "get_dsp_on");
-
-  // Osc Frequency property
-  ClassDB::bind_method(D_METHOD("get_freq"), &PureDataGD::get_freq);
-  ClassDB::bind_method(D_METHOD("set_freq", "p_freq"), &PureDataGD::set_freq);
-
-  ADD_PROPERTY(
-      PropertyInfo(Variant::FLOAT, "freq", PROPERTY_HINT_RANGE, "20,4000,0.5"),
-      "set_freq", "get_freq");
+  // Usage
+  BIND_PROPERTY(STRING, patch_path, PROPERTY_HINT_FILE, "*.pd");
+  BIND_PROPERTY(BOOL, dsp_on, PROPERTY_HINT_NONE, "");
+  BIND_PROPERTY(FLOAT, freq, PROPERTY_HINT_RANGE, "20,4000,0.5");
 
   // Send float to PureData
-  ClassDB::bind_method(D_METHOD("send_float", "receiver", "float"),
-                       &PureDataGD::send_float);
+  BIND_METHOD(send_float, "receiver", "float");
 }
 
 // Convert resource path String to a FileAccess object.

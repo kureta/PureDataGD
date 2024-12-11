@@ -4,7 +4,19 @@
 #include <PdBase.hpp>
 #include <PdTypes.hpp>
 #include <godot_cpp/classes/audio_stream_player.hpp>
-#include <godot_cpp/classes/file_access.hpp>
+
+#define BIND_METHOD(method_name, ...)                                          \
+  ClassDB::bind_method(D_METHOD(#method_name, ##__VA_ARGS__),                  \
+                       &PureDataGD::method_name);
+
+#define BIND_PROPERTY(type, property_name, hint_type, hint_string)             \
+  ClassDB::bind_method(D_METHOD("get_" #property_name),                        \
+                       &PureDataGD::get_##property_name);                      \
+  ClassDB::bind_method(D_METHOD("set_" #property_name, "p_" #property_name),   \
+                       &PureDataGD::set_##property_name);                      \
+  ADD_PROPERTY(                                                                \
+      PropertyInfo(Variant::type, #property_name, hint_type, hint_string),     \
+      "set_" #property_name, "get_" #property_name);
 
 namespace godot {
 
