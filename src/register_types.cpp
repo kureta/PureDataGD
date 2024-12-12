@@ -1,5 +1,6 @@
 #include "register_types.h"
 
+#include "audiostream_mytone.h"
 #include "puredatagd.h"
 
 #include <gdextension_interface.h>
@@ -14,6 +15,7 @@ void initialize_puredata_module(ModuleInitializationLevel p_level) {
   }
 
   GDREGISTER_CLASS(PureDataGD);
+  GDREGISTER_CLASS(GenPD);
 }
 
 void uninitialize_puredata_module(ModuleInitializationLevel p_level) {

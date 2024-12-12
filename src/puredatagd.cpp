@@ -5,6 +5,8 @@
 
 using namespace godot;
 
+void GenPD::_bind_methods() {}
+
 // TODO: PdBase object refers to a single static PureData instance.
 // Changing patch does not properly close the previous patch (maybe).
 // TODO: Seems kine I haven't been using the GDExtension interface.

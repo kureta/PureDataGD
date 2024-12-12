@@ -3,6 +3,7 @@
 
 #include <PdBase.hpp>
 #include <PdTypes.hpp>
+#include <godot_cpp/classes/audio_stream_generator.hpp>
 #include <godot_cpp/classes/audio_stream_player.hpp>
 
 #define BIND_METHOD(method_name, ...)                                          \
@@ -19,6 +20,14 @@
       "set_" #property_name, "get_" #property_name);
 
 namespace godot {
+
+class GenPD : public AudioStreamGenerator {
+  // NOLINTNEXTLINE(modernize-use-auto)
+  GDCLASS(GenPD, AudioStreamGenerator);
+
+protected:
+  static void _bind_methods();
+};
 
 class PureDataGD : public AudioStreamPlayer {
   // NOLINTNEXTLINE(modernize-use-auto)
