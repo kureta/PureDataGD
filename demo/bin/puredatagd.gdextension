@@ -13,8 +13,14 @@ windows.release.x86_64 = "res://bin/PureDataGD.dll"
 
 [dependencies]
 windows.debug.x86_64 = {
-	"res://bin/libpd.dll": ""
+  "res://bin/libpd.dll": ""
 }
 windows.release.x86_64 = {
-	"res://bin/libpd.dll": ""
+  "res://bin/libpd.dll": ""
+}
+linux.debug.x86_64 = {
+  "res://bin/libpd.so": ""
+}
+linux.release.x86_64 = {
+  "res://bin/libpd.so": ""
 }
