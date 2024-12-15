@@ -1,0 +1,28 @@
+﻿{
+    "configurations": [
+        {
+            "name": "x64-Debug",
+            "generator": "Ninja",
+            "configurationType": "Debug",
+            "inheritEnvironments": [ "msvc_x64_x64" ],
+            "buildRoot": "${projectDir}\\out\\build\\${name}",
+            "installRoot": "${projectDir}\\out\\install\\${name}",
+            "cmakeCommandArgs": "",
+            "buildCommandArgs": "",
+            "ctestCommandArgs": "",
+            "variables": [
+                {
+                    "name": "PTHREADS_LIB",
+                    "value": "${projectDir}/out/build/x64-Debug/vcpkg_installed/vcpkg/pkgs/pthreads_x64-windows/lib/pthreadVC3.lib",
+                    "type": "FILEPATH"
+                },
+                {
+                    "name": "PTHREADS_INCLUDE_DIR",
+                    "value": "${projectDir}/out/build/x64-Debug/vcpkg_installed/vcpkg/pkgs/pthreads_x64-windows/include",
+                    "type": "PATH"
+                }
+            ],
+            "cmakeToolchain": "C:/Program Files/Microsoft Visual Studio/2022/Community/VC/vcpkg/scripts/buildsystems/vcpkg.cmake"
+        }
+    ]
+}

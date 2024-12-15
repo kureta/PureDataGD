@@ -8,3 +8,13 @@ reloadable = true
 
 linux.debug.x86_64 = "res://bin/libPureDataGD.so"
 linux.release.x86_64 = "res://bin/libPureDataGD.so"
+windows.debug.x86_64 = "res://bin/PureDataGD.dll"
+windows.release.x86_64 = "res://bin/PureDataGD.dll"
+
+[dependencies]
+windows.debug.x86_64 = {
+	"res://bin/libpd.dll": ""
+}
+windows.release.x86_64 = {
+	"res://bin/libpd.dll": ""
+}

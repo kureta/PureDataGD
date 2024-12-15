@@ -56,14 +56,14 @@ target_include_directories(PureDataGD PRIVATE
 # Link against godot-cpp
 target_link_libraries(PureDataGD PRIVATE godot-cpp)
 # Add the `libpd` library to your target
-target_link_libraries(PureDataGD PRIVATE libpd_static)
+target_link_libraries(PureDataGD PRIVATE libpd)
 
 # Add install target
-install(TARGETS PureDataGD DESTINATION bin)
+install(TARGETS PureDataGD libpd DESTINATION bin)
 
 # ====== Configure the project defaults ======
 set(GODOT_PRECISION "double" CACHE STRING "Precision used in Godot" FORCE)
-set(LIBPD_SHARED OFF CACHE STRING "Build libpd as a shared library" FORCE)
+
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/demo
   CACHE STRING "Install prefix" FORCE)
 

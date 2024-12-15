@@ -2,4 +2,8 @@ build/
 .cache/
 out/
 *.so
+*.lib
+*.dll
+*.pdb
 compile_commands.json
+.vs/
