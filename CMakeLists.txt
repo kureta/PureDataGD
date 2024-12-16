@@ -15,6 +15,15 @@ FetchContent_Declare(
 )
 # Fetch and make godot-cpp available
 FetchContent_MakeAvailable(godot-cpp)
+set(GODOT_PRECISION "double" CACHE STRING "Precision used in Godot" FORCE)
+
+if(CMAKE_BUILD_TYPE MATCHES "Debug")
+  set(GODOT_USE_HOT_RELOAD ON CACHE STRING "Enable hot  reloading" FORCE)
+endif()
+
+if(CMAKE_BUILD_TYPE MATCHES "Release")
+  set(GODOT_USE_HOT_RELOAD OFF CACHE STRING "Enable hot  reloading" FORCE)
+endif()
 
 # > ====== libpd ======
 FetchContent_Declare(
@@ -23,6 +32,9 @@ FetchContent_Declare(
   GIT_TAG master # Use an appropriate tag or branch
 )
 FetchContent_MakeAvailable(libpd)
+# LIBPD_STATIC does not compile on MSVC
+set(LIBPD_SHARED ON CACHE STRING "Build libpd as a shared library" FORCE)
+set(LIBPD_STATIC OFF CACHE STRING "Build libpd as a static library" FORCE)
 
 # ====== Define and setup the target ======
 # Specify the source files
@@ -62,20 +74,5 @@ target_link_libraries(PureDataGD PRIVATE libpd)
 install(TARGETS PureDataGD libpd DESTINATION bin)
 
 # ====== Configure the project defaults ======
-set(GODOT_PRECISION "double" CACHE STRING "Precision used in Godot" FORCE)
-
 set(CMAKE_INSTALL_PREFIX ${CMAKE_SOURCE_DIR}/demo
   CACHE STRING "Install prefix" FORCE)
-
-if(CMAKE_BUILD_TYPE MATCHES "Debug")
-  set(GODOT_USE_HOT_RELOAD ON CACHE STRING "Enable hot  reloading" FORCE)
-endif()
-
-if(CMAKE_BUILD_TYPE MATCHES "Release")
-  set(GODOT_USE_HOT_RELOAD OFF CACHE STRING "Enable hot  reloading" FORCE)
-
-  if(CMAKE_CXX_COMPILER_ID MATCHES "GNU|Clang")
-    set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -march=native -O3")
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -march=native -O3")
-  endif()
-endif()
