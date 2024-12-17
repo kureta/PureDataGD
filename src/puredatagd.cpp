@@ -17,10 +17,11 @@ void PureDataGD::_bind_methods() {
   // Properties
   BIND_PROPERTY(STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
   BIND_PROPERTY(BOOL, dsp_on, PROPERTY_HINT_NONE, "")
-  BIND_PROPERTY(FLOAT, freq, PROPERTY_HINT_RANGE, "20,4000,0.5")
 
   // Methods
   BIND_METHOD(send_float, "receiver", "float")
+  BIND_METHOD(send_bang, "receiver")
+  BIND_METHOD(send_symbol, "receiver", "symbol")
 }
 
 // Convert resource path String to a FileAccess object.
@@ -98,14 +99,16 @@ void PureDataGD::set_dsp_on(bool status) {
   dsp_on = status;
 }
 
-double PureDataGD::get_freq() { return freq; }
-void PureDataGD::set_freq(const float f) {
-  freq = f;
-  pd.sendFloat("fromGodot", freq);
-}
-
 void PureDataGD::send_float(const String receiver, const float value) {
   pd.sendFloat(receiver.utf8().get_data(), value);
+}
+
+void PureDataGD::send_bang(const String receiver) {
+  pd.sendBang(receiver.utf8().get_data());
+}
+
+void PureDataGD::send_symbol(const String receiver, const String value) {
+  pd.sendSymbol(receiver.utf8().get_data(), value.utf8().get_data());
 }
 
 // This will suffice for a long time. Just runs PD and fills Godot's audio

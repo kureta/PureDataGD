@@ -18,6 +18,5 @@ texture = SubResource("PlaceholderTexture2D_fhb7f")
 script = ExtResource("2_1jgky")
 
 [node name="PureDataGD" type="PureDataGD" parent="."]
-patch_path = "res://patches/test-2.pd"
-freq = 220.0
+patch_path = "res://patches/float_bang_test.pd"
 stream = SubResource("AudioStreamGenerator_fl2m4")

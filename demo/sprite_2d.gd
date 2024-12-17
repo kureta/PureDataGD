@@ -1,7 +1,7 @@
 extends Sprite2D
 
 var t = 0.0
-var is_toggled = false
+var is_toggled = true
 
 # Called when the node enters the scene tree for the first time.
 func _ready():

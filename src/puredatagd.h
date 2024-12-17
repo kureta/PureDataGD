@@ -5,6 +5,7 @@
 #include <PdTypes.hpp>
 #include <godot_cpp/classes/audio_stream_generator.hpp>
 #include <godot_cpp/classes/audio_stream_player.hpp>
+#include <godot_cpp/templates/list.hpp>
 
 #define BIND_METHOD(method_name, ...)                                          \
   ClassDB::bind_method(D_METHOD(#method_name, ##__VA_ARGS__),                  \
@@ -42,7 +43,6 @@ private:
   String patch_path{};
   void init();
   void load_patch();
-  float freq = 440.0;
 
 protected:
   static void _bind_methods();
@@ -62,12 +62,10 @@ public:
   bool get_dsp_on();
   void set_dsp_on(const bool status);
 
-  // Osc Frequency
-  double get_freq();
-  void set_freq(const float f);
-
   // Send float
   void send_float(const String receiver, const float value);
+  void send_bang(const String receiver);
+  void send_symbol(const String receiver, const String value);
 };
 
 } // namespace godot
