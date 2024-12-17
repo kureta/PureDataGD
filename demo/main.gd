@@ -20,6 +20,7 @@ func _ready():
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
 	t += delta
-	$PureDataGD.send_float("frequency", $Sprite2D.position.y + f - 256)
+	$PureDataGD.send_list("frequency", [$Sprite2D.position.y + f - 256, -$Sprite2D.position.y + f + 256])
 	if fmod(t+delta, 1.0) < fmod(t, 1.0):
 		$PureDataGD.send_bang("trigger")
+		print("banging!")

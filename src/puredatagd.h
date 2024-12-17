@@ -6,6 +6,7 @@
 #include <godot_cpp/classes/audio_stream_generator.hpp>
 #include <godot_cpp/classes/audio_stream_player.hpp>
 #include <godot_cpp/templates/list.hpp>
+#include <godot_cpp/variant/array.hpp>
 
 #define BIND_METHOD(method_name, ...)                                          \
   ClassDB::bind_method(D_METHOD(#method_name, ##__VA_ARGS__),                  \
@@ -65,6 +66,7 @@ public:
   // Send float
   void send_float(const String receiver, const float value);
   void send_bang(const String receiver);
+  void send_list(const String receiver, const Array list);
   void send_symbol(const String receiver, const String value);
 };
 

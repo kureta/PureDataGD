@@ -1,4 +1,5 @@
 #include "puredatagd.h"
+#include "PdTypes.hpp"
 #include <godot_cpp/classes/audio_stream_generator_playback.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
@@ -21,6 +22,7 @@ void PureDataGD::_bind_methods() {
   // Methods
   BIND_METHOD(send_float, "receiver", "float")
   BIND_METHOD(send_bang, "receiver")
+  BIND_METHOD(send_list, "receiver", "list")
   BIND_METHOD(send_symbol, "receiver", "symbol")
 }
 
@@ -105,6 +107,16 @@ void PureDataGD::send_float(const String receiver, const float value) {
 
 void PureDataGD::send_bang(const String receiver) {
   pd.sendBang(receiver.utf8().get_data());
+}
+
+void PureDataGD::send_list(const String receiver, const Array list) {
+  pd::List vec;
+  for (int i = 0; i < list.size(); ++i) {
+    Variant element = list[i];
+    vec.addFloat(float(element));
+  }
+
+  pd.sendList(receiver.utf8().get_data(), vec);
 }
 
 void PureDataGD::send_symbol(const String receiver, const String value) {
