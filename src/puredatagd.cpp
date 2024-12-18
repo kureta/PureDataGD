@@ -9,9 +9,13 @@ using namespace godot;
 void GenPD::_bind_methods() {}
 
 // TODO: PdBase object refers to a single static PureData instance.
-// Changing patch does not properly close the previous patch (maybe).
-// TODO: Seems kine I haven't been using the GDExtension interface.
+//       enable multi instance so that we can define different sources
+//       of positional audio.
 // TODO: I am extending the wrong class. Should extend AudioStreamGenerator
+//       Or in some other way I should be able to use pd patches in any
+//       audio node (2D, 3D, ...)
+// TODO: Redirect all stdout/stderr from libpd to Godot.
+// TODO: libpd cannot access/autoload other patches in the same directory.
 
 // Define things that will be called by or seen inside the Godot GUI.
 void PureDataGD::_bind_methods() {
@@ -26,8 +30,8 @@ void PureDataGD::_bind_methods() {
   BIND_METHOD(send_symbol, "receiver", "symbol")
 }
 
-// Convert resource path String to a FileAccess object.
 // TODO: set and get via path_name but store FileAccess object as state.
+// Convert resource path String to a FileAccess object.
 Ref<FileAccess> resource_path_to_file(const String &path) {
   Ref<FileAccess> file = FileAccess::open(path, FileAccess::READ);
 
