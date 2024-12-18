@@ -16,6 +16,10 @@ void GenPD::_bind_methods() {}
 //       audio node (2D, 3D, ...)
 // TODO: Redirect all stdout/stderr from libpd to Godot.
 // TODO: libpd cannot access/autoload other patches in the same directory.
+// TODO: buffer size, block size, sampler rate, etc. should be configurable
+//       from Godot. Currently, somewhere in here or in libpd, the buffer
+//       is set to 25ms. If buffer set in the Generator in Godot is not exactly
+//       the same (or maybe higher) audio gets borked.
 
 // Define things that will be called by or seen inside the Godot GUI.
 void PureDataGD::_bind_methods() {
