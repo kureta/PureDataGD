@@ -9,15 +9,15 @@
 #include <godot_cpp/variant/array.hpp>
 
 // Some macros
-#define BIND_METHOD(method_name, ...)                                          \
+#define BIND_METHOD(class, method_name, ...)                                   \
   ClassDB::bind_method(D_METHOD(#method_name, ##__VA_ARGS__),                  \
-                       &PureDataGD::method_name);
+                       &class ::method_name);
 
-#define BIND_PROPERTY(type, property_name, hint_type, hint_string)             \
+#define BIND_PROPERTY(class, type, property_name, hint_type, hint_string)      \
   ClassDB::bind_method(D_METHOD("get_" #property_name),                        \
-                       &PureDataGD::get_##property_name);                      \
+                       &class ::get_##property_name);                          \
   ClassDB::bind_method(D_METHOD("set_" #property_name, "p_" #property_name),   \
-                       &PureDataGD::set_##property_name);                      \
+                       &class ::set_##property_name);                          \
   ADD_PROPERTY(                                                                \
       PropertyInfo(Variant::type, #property_name, hint_type, hint_string),     \
       "set_" #property_name, "get_" #property_name);
@@ -78,6 +78,11 @@ private:
   bool stereo;
   int hz;
 
+  pd::PdBase pd{};
+  pd::Patch patch{};
+  String patch_path{};
+  void load_patch();
+
 public:
   AudioStreamPD();
   [[nodiscard]] Ref<AudioStreamPlayback> _instantiate_playback() const override;
@@ -87,6 +92,10 @@ public:
 
   // Generate "size" PCM samples in "pcm_buf"
   void gen_tone(int16_t *pcm_buf, int size);
+
+  // Patch path
+  String get_patch_path();
+  void set_patch_path(const String path);
 
 protected:
   static void _bind_methods();

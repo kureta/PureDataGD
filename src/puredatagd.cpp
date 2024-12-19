@@ -3,10 +3,27 @@
 #include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/audio_stream_generator_playback.hpp>
 #include <godot_cpp/classes/file_access.hpp>
+#include <godot_cpp/classes/global_constants.hpp>
 #include <godot_cpp/core/memory.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
+
+// TODO: set and get via path_name but store FileAccess object as state.
+// Convert resource path String to a FileAccess object.
+Ref<FileAccess> resource_path_to_file(const String &path) {
+  Ref<FileAccess> file = FileAccess::open(path, FileAccess::READ);
+
+  return file;
+}
+
+// Check if a resource exists
+bool file_exists(const String &path) {
+  Ref<FileAccess> file = resource_path_to_file(path);
+  if (!file.is_valid())
+    ERR_PRINT(String("File does not exist: ") + path);
+  return file.is_valid();
+}
 
 enum {
   // Native Godot sample rate (use AudioStreamPlaybackResampled for other
@@ -18,7 +35,41 @@ enum {
   MIX_FRAC_BITS = 13
 };
 
-AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(false), hz(639) {}
+// ============ AudioStreamPD ============
+
+AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(true), hz(639) {
+  int n_channels = stereo ? 2 : 1;
+  if (!pd.init(1, n_channels, mix_rate)) {
+    ERR_PRINT("Failed to initialize PureData!");
+    return;
+  }
+  pd.computeAudio(false);
+  load_patch();
+}
+
+String AudioStreamPD::get_patch_path() { return patch_path; }
+
+void AudioStreamPD::set_patch_path(const String path) {
+  UtilityFunctions::print("Trying to set path to: ", path);
+  patch_path = path;
+  if (!file_exists(patch_path))
+    return;
+
+  pd.closePatch(patch);
+  patch.clear();
+  load_patch();
+
+  UtilityFunctions::print("Set patch path to: ", patch_path);
+}
+
+void AudioStreamPD::load_patch() {
+  if (!file_exists(patch_path))
+    return;
+
+  patch = pd.openPatch(
+      resource_path_to_file(patch_path)->get_path_absolute().utf8().get_data(),
+      "/");
+}
 
 Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {
   Ref<AudioStreamPlaybackPD> playback;
@@ -30,10 +81,23 @@ Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {
 void AudioStreamPD::set_position(uint64_t p) { pos = p; }
 
 void AudioStreamPD::_bind_methods() {
-  // Required by GDCLASS macro
+  BIND_PROPERTY(AudioStreamPD, STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
+}
+
+void AudioStreamPD::gen_tone(int16_t *pcm_buf, int size) {
+  // Normalized angular frequency: the angular increment (phase) per sample, in
+  // radians See page 40 of BasicSynth (Daniel R. Mitchell), or
+  // https://dsp.stackexchange.com/a/53503
+  double phaseIncrement = 2.0 * Math_PI * double(hz) / (double(mix_rate));
+  for (int i = 0; i < size; i++) {
+    pcm_buf[i] = 32767.0 * sin(phaseIncrement * double(pos + i));
+  }
+  pos += size;
 }
 
 #define zeromem(to, count) memset(to, 0, count)
+
+// ============ AudioStreamPlaybackPD ============
 
 AudioStreamPlaybackPD::AudioStreamPlaybackPD() : active(false) {
   // TODO Is locking actually required?
@@ -57,11 +121,13 @@ void AudioStreamPlaybackPD::_bind_methods() {
 void AudioStreamPlaybackPD::_start(double from_pos) {
   _seek(from_pos);
   active = true;
+  audioStream->pd.computeAudio(active);
 }
 
 void AudioStreamPlaybackPD::_stop() {
   active = false;
   audioStream->set_position(0);
+  audioStream->pd.computeAudio(active);
 }
 
 void AudioStreamPlaybackPD::_seek(double position) {
@@ -98,17 +164,6 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
   return frames;
 }
 
-void AudioStreamPD::gen_tone(int16_t *pcm_buf, int size) {
-  // Normalized angular frequency: the angular increment (phase) per sample, in
-  // radians See page 40 of BasicSynth (Daniel R. Mitchell), or
-  // https://dsp.stackexchange.com/a/53503
-  double phaseIncrement = 2.0 * Math_PI * double(hz) / (double(mix_rate));
-  for (int i = 0; i < size; i++) {
-    pcm_buf[i] = 32767.0 * sin(phaseIncrement * double(pos + i));
-  }
-  pos += size;
-}
-
 // TODO: PdBase object refers to a single static PureData instance.
 //       enable multi instance so that we can define different sources
 //       of positional audio.
@@ -125,30 +180,14 @@ void AudioStreamPD::gen_tone(int16_t *pcm_buf, int size) {
 // Define things that will be called by or seen inside the Godot GUI.
 void PureDataGD::_bind_methods() {
   // Properties
-  BIND_PROPERTY(STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
-  BIND_PROPERTY(BOOL, dsp_on, PROPERTY_HINT_NONE, "")
+  BIND_PROPERTY(PureDataGD, STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
+  BIND_PROPERTY(PureDataGD, BOOL, dsp_on, PROPERTY_HINT_NONE, "")
 
   // Methods
-  BIND_METHOD(send_float, "receiver", "float")
-  BIND_METHOD(send_bang, "receiver")
-  BIND_METHOD(send_list, "receiver", "list")
-  BIND_METHOD(send_symbol, "receiver", "symbol")
-}
-
-// TODO: set and get via path_name but store FileAccess object as state.
-// Convert resource path String to a FileAccess object.
-Ref<FileAccess> resource_path_to_file(const String &path) {
-  Ref<FileAccess> file = FileAccess::open(path, FileAccess::READ);
-
-  return file;
-}
-
-// Check if a resource exists
-bool file_exists(const String &path) {
-  Ref<FileAccess> file = resource_path_to_file(path);
-  if (!file.is_valid())
-    ERR_PRINT(String("File does not exist: ") + path);
-  return file.is_valid();
+  BIND_METHOD(PureDataGD, send_float, "receiver", "float")
+  BIND_METHOD(PureDataGD, send_bang, "receiver")
+  BIND_METHOD(PureDataGD, send_list, "receiver", "list")
+  BIND_METHOD(PureDataGD, send_symbol, "receiver", "symbol")
 }
 
 void PureDataGD::init() {

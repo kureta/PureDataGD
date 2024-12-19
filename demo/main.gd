@@ -14,8 +14,10 @@ func _ready():
 	
 	$PureDataGD.patch_path = tmp_file.get_path_absolute()
 	
-	$PureDataGD.dsp_on = true
-	$PureDataGD.play()
+	#$PureDataGD.dsp_on = true
+	#$PureDataGD.play()
+	
+	$AudioStreamPlayer2D.play()
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
