@@ -3,11 +3,10 @@
 
 #include <PdBase.hpp>
 #include <PdTypes.hpp>
-#include <godot_cpp/classes/audio_stream_generator.hpp>
 #include <godot_cpp/classes/audio_stream_player.hpp>
-#include <godot_cpp/templates/list.hpp>
 #include <godot_cpp/variant/array.hpp>
 
+// Some macros
 #define BIND_METHOD(method_name, ...)                                          \
   ClassDB::bind_method(D_METHOD(#method_name, ##__VA_ARGS__),                  \
                        &PureDataGD::method_name);
@@ -23,14 +22,7 @@
 
 namespace godot {
 
-class GenPD : public AudioStreamGenerator {
-  // NOLINTNEXTLINE(modernize-use-auto)
-  GDCLASS(GenPD, AudioStreamGenerator);
-
-protected:
-  static void _bind_methods();
-};
-
+// Wrong but working class
 class PureDataGD : public AudioStreamPlayer {
   // NOLINTNEXTLINE(modernize-use-auto)
   GDCLASS(PureDataGD, AudioStreamPlayer);

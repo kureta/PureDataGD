@@ -1,12 +1,9 @@
 #include "puredatagd.h"
-#include "PdTypes.hpp"
 #include <godot_cpp/classes/audio_stream_generator_playback.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
-
-void GenPD::_bind_methods() {}
 
 // TODO: PdBase object refers to a single static PureData instance.
 //       enable multi instance so that we can define different sources
