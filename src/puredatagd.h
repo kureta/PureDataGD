@@ -3,6 +3,8 @@
 
 #include <PdBase.hpp>
 #include <PdTypes.hpp>
+#include <godot_cpp/classes/audio_stream.hpp>
+#include <godot_cpp/classes/audio_stream_playback.hpp>
 #include <godot_cpp/classes/audio_stream_player.hpp>
 #include <godot_cpp/variant/array.hpp>
 
@@ -60,6 +62,67 @@ public:
   void send_bang(const String receiver);
   void send_list(const String receiver, const Array list);
   void send_symbol(const String receiver, const String value);
+};
+
+class AudioStreamSimple : public AudioStream {
+  // NOLINTNEXTLINE(modernize-use-auto)
+  GDCLASS(AudioStreamSimple, AudioStream)
+  friend class AudioStreamPlaybackSimple;
+
+private:
+  // A position / phase of the signal to generate (unit: samples)
+  // TODO Should this state be in Playback instead?
+  uint64_t pos;
+
+  int mix_rate;
+  bool stereo;
+  int hz;
+
+public:
+  AudioStreamSimple();
+  [[nodiscard]] Ref<AudioStreamPlayback> _instantiate_playback() const override;
+
+  // Set the current position / phase of the signal to generate (in samples)
+  void set_position(uint64_t pos);
+
+  // Generate "size" PCM samples in "pcm_buf"
+  void gen_tone(int16_t *pcm_buf, int size);
+
+protected:
+  static void _bind_methods();
+};
+
+class AudioStreamPlaybackSimple : public AudioStreamPlayback {
+  // NOLINTNEXTLINE(modernize-use-auto)
+  GDCLASS(AudioStreamPlaybackSimple, AudioStreamPlayback)
+  friend class AudioStreamSimple;
+
+private:
+  Ref<AudioStreamSimple>
+      audioStream; // Keep track of the AudioStream which instantiated us
+  bool active;     // Are we currently playing?
+  void *pcm_buffer;
+
+public:
+  AudioStreamPlaybackSimple();
+  ~AudioStreamPlaybackSimple() override;
+
+  /**
+   * "AudioStreamPlayer uses mix callback to obtain PCM data.
+   *  The callback must match sample rate and fill the buffer.
+   *  Since AudioStreamPlayback is controlled by the audio thread,
+   *  i/o and dynamic memory allocation are forbidden."
+   */
+  int32_t _mix(AudioFrame *p_buffer, float p_rate_scale,
+               int32_t p_frames) override;
+
+  [[nodiscard]] bool _is_playing() const override;
+  void _start(double from_pos) override;
+  void _seek(double position) override;
+  void _stop() override;
+
+protected:
+  static void _bind_methods();
 };
 
 } // namespace godot

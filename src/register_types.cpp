@@ -14,6 +14,8 @@ void initialize_puredata_module(ModuleInitializationLevel p_level) {
   }
 
   GDREGISTER_CLASS(PureDataGD);
+  GDREGISTER_CLASS(AudioStreamSimple);
+  GDREGISTER_CLASS(AudioStreamPlaybackSimple);
 }
 
 void uninitialize_puredata_module(ModuleInitializationLevel p_level) {
