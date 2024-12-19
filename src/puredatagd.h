@@ -82,6 +82,7 @@ private:
   pd::Patch patch{};
   String patch_path{};
   void load_patch();
+  std::array<float, 2048 * 2> outbuf_;
 
 public:
   AudioStreamPD();
@@ -91,7 +92,7 @@ public:
   void set_position(uint64_t pos);
 
   // Generate "size" PCM samples in "pcm_buf"
-  void gen_tone(int16_t *pcm_buf, int size);
+  void gen_tone(float *pcm_buf, int size);
 
   // Patch path
   String get_patch_path();

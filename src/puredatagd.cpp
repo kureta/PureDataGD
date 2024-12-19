@@ -84,15 +84,17 @@ void AudioStreamPD::_bind_methods() {
   BIND_PROPERTY(AudioStreamPD, STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
 }
 
-void AudioStreamPD::gen_tone(int16_t *pcm_buf, int size) {
+void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
   // Normalized angular frequency: the angular increment (phase) per sample, in
   // radians See page 40 of BasicSynth (Daniel R. Mitchell), or
   // https://dsp.stackexchange.com/a/53503
   double phaseIncrement = 2.0 * Math_PI * double(hz) / (double(mix_rate));
   for (int i = 0; i < size; i++) {
-    pcm_buf[i] = 32767.0 * sin(phaseIncrement * double(pos + i));
+    pcm_buf[i] = sin(phaseIncrement * double(pos + i));
   }
   pos += size;
+
+  // pd.processFloat(1, nullptr, outbuf_.data());
 }
 
 #define zeromem(to, count) memset(to, 0, count)
@@ -152,13 +154,12 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
 
   // Generate 16 bits PCM samples in "buf"
   zeromem(pcm_buffer, PCM_BUFFER_SIZE);
-  auto *buf = (int16_t *)pcm_buffer;
+  auto *buf = (float *)pcm_buffer;
   audioStream->gen_tone(buf, frames);
 
   // Convert samples to Godot format (floats in [-1; 1])
   for (int i = 0; i < frames; i++) {
-    float sample = float(buf[i]) / 32767.0;
-    buffer[i] = {sample, sample};
+    buffer[i] = {buf[i], buf[i]};
   }
 
   return frames;
