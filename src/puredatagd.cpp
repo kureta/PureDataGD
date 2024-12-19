@@ -18,25 +18,24 @@ enum {
   MIX_FRAC_BITS = 13
 };
 
-AudioStreamSimple::AudioStreamSimple()
-    : mix_rate(MIX_RATE), stereo(false), hz(639) {}
+AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(false), hz(639) {}
 
-Ref<AudioStreamPlayback> AudioStreamSimple::_instantiate_playback() const {
-  Ref<AudioStreamPlaybackSimple> playback;
+Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {
+  Ref<AudioStreamPlaybackPD> playback;
   playback.instantiate();
-  playback->audioStream = Ref<AudioStreamSimple>(this);
+  playback->audioStream = Ref<AudioStreamPD>(this);
   return playback;
 }
 
-void AudioStreamSimple::set_position(uint64_t p) { pos = p; }
+void AudioStreamPD::set_position(uint64_t p) { pos = p; }
 
-void AudioStreamSimple::_bind_methods() {
+void AudioStreamPD::_bind_methods() {
   // Required by GDCLASS macro
 }
 
 #define zeromem(to, count) memset(to, 0, count)
 
-AudioStreamPlaybackSimple::AudioStreamPlaybackSimple() : active(false) {
+AudioStreamPlaybackPD::AudioStreamPlaybackPD() : active(false) {
   // TODO Is locking actually required?
   AudioServer::get_singleton()->lock();
   pcm_buffer = memalloc(PCM_BUFFER_SIZE);
@@ -44,28 +43,28 @@ AudioStreamPlaybackSimple::AudioStreamPlaybackSimple() : active(false) {
   AudioServer::get_singleton()->unlock();
 }
 
-AudioStreamPlaybackSimple::~AudioStreamPlaybackSimple() {
+AudioStreamPlaybackPD::~AudioStreamPlaybackPD() {
   if (pcm_buffer) {
     memfree(pcm_buffer);
     pcm_buffer = nullptr;
   }
 }
 
-void AudioStreamPlaybackSimple::_bind_methods() {
+void AudioStreamPlaybackPD::_bind_methods() {
   // Required by GDCLASS macro
 }
 
-void AudioStreamPlaybackSimple::_start(double from_pos) {
+void AudioStreamPlaybackPD::_start(double from_pos) {
   _seek(from_pos);
   active = true;
 }
 
-void AudioStreamPlaybackSimple::_stop() {
+void AudioStreamPlaybackPD::_stop() {
   active = false;
   audioStream->set_position(0);
 }
 
-void AudioStreamPlaybackSimple::_seek(double position) {
+void AudioStreamPlaybackPD::_seek(double position) {
   if (position < 0) {
     position = 0;
   }
@@ -76,10 +75,10 @@ void AudioStreamPlaybackSimple::_seek(double position) {
                             << MIX_FRAC_BITS);
 }
 
-bool AudioStreamPlaybackSimple::_is_playing() const { return active; }
+bool AudioStreamPlaybackPD::_is_playing() const { return active; }
 
-int32_t AudioStreamPlaybackSimple::_mix(AudioFrame *buffer, float rate_scale,
-                                        int32_t frames) {
+int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
+                                    int32_t frames) {
   ERR_FAIL_COND_V(!active, 0);
 
   // TODO What is the max possible value for "frames"?
@@ -99,7 +98,7 @@ int32_t AudioStreamPlaybackSimple::_mix(AudioFrame *buffer, float rate_scale,
   return frames;
 }
 
-void AudioStreamSimple::gen_tone(int16_t *pcm_buf, int size) {
+void AudioStreamPD::gen_tone(int16_t *pcm_buf, int size) {
   // Normalized angular frequency: the angular increment (phase) per sample, in
   // radians See page 40 of BasicSynth (Daniel R. Mitchell), or
   // https://dsp.stackexchange.com/a/53503

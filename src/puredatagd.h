@@ -64,10 +64,10 @@ public:
   void send_symbol(const String receiver, const String value);
 };
 
-class AudioStreamSimple : public AudioStream {
+class AudioStreamPD : public AudioStream {
   // NOLINTNEXTLINE(modernize-use-auto)
-  GDCLASS(AudioStreamSimple, AudioStream)
-  friend class AudioStreamPlaybackSimple;
+  GDCLASS(AudioStreamPD, AudioStream)
+  friend class AudioStreamPlaybackPD;
 
 private:
   // A position / phase of the signal to generate (unit: samples)
@@ -79,7 +79,7 @@ private:
   int hz;
 
 public:
-  AudioStreamSimple();
+  AudioStreamPD();
   [[nodiscard]] Ref<AudioStreamPlayback> _instantiate_playback() const override;
 
   // Set the current position / phase of the signal to generate (in samples)
@@ -92,20 +92,20 @@ protected:
   static void _bind_methods();
 };
 
-class AudioStreamPlaybackSimple : public AudioStreamPlayback {
+class AudioStreamPlaybackPD : public AudioStreamPlayback {
   // NOLINTNEXTLINE(modernize-use-auto)
-  GDCLASS(AudioStreamPlaybackSimple, AudioStreamPlayback)
-  friend class AudioStreamSimple;
+  GDCLASS(AudioStreamPlaybackPD, AudioStreamPlayback)
+  friend class AudioStreamPD;
 
 private:
-  Ref<AudioStreamSimple>
+  Ref<AudioStreamPD>
       audioStream; // Keep track of the AudioStream which instantiated us
   bool active;     // Are we currently playing?
   void *pcm_buffer;
 
 public:
-  AudioStreamPlaybackSimple();
-  ~AudioStreamPlaybackSimple() override;
+  AudioStreamPlaybackPD();
+  ~AudioStreamPlaybackPD() override;
 
   /**
    * "AudioStreamPlayer uses mix callback to obtain PCM data.
