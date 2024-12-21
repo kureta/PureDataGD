@@ -28,7 +28,7 @@ bool file_exists(const String &path) {
 enum {
   // Native Godot sample rate (use AudioStreamPlaybackResampled for other
   // values)
-  MIX_RATE = 44100,
+  MIX_RATE = 48000,
   // A buffer of about 93ms (at 44100 mix rate)
   PCM_BUFFER_SIZE = 4096,
   // TODO Document this (see core implementations). Note that 4096=2^13
@@ -37,7 +37,8 @@ enum {
 
 // ============ AudioStreamPD ============
 
-AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(true), hz(639) {
+// TODO: stereo doesn't work
+AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(false), hz(639) {
   int n_channels = stereo ? 2 : 1;
   if (!pd.init(1, n_channels, mix_rate)) {
     ERR_PRINT("Failed to initialize PureData!");
@@ -45,6 +46,12 @@ AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(true), hz(639) {
   }
   pd.computeAudio(true);
   load_patch();
+}
+
+// TODO: Doppler effects sends in a `pitch_scale` parameter
+// It's our responsibility to use it to create the doppler effect (I guess)
+void AudioStreamPD::send_float(const String receiver, const float value) {
+  pd.sendFloat(receiver.utf8().get_data(), value);
 }
 
 String AudioStreamPD::get_patch_path() { return patch_path; }
@@ -82,28 +89,19 @@ Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {
 
 void AudioStreamPD::set_position(uint64_t p) { pos = p; }
 
+// TODO: Add buffer size and sample rate as properties
 void AudioStreamPD::_bind_methods() {
   BIND_PROPERTY(AudioStreamPD, STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
+
+  BIND_METHOD(AudioStreamPD, send_float, "receiver", "float")
 }
 
 void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
-  // Normalized angular frequency: the angular increment (phase) per sample, in
-  // radians See page 40 of BasicSynth (Daniel R. Mitchell), or
-  // https://dsp.stackexchange.com/a/53503
-  double phaseIncrement = 2.0 * Math_PI * double(hz) / (double(mix_rate));
-  for (int i = 0; i < size; i++) {
-    pcm_buf[i] = sin(phaseIncrement * double(pos + i));
-  }
-  pos += size;
+  int ticks = size / pd.blockSize();
 
-  // TODO: There is an issue with threads!
-  if (file_exists(patch_path)) {
-    int ticks = size / pd.blockSize();
-
-    if (!pd.processFloat(ticks, inbuf_.data(), pcm_buf)) {
-      ERR_PRINT("shit hit the fan");
-      return;
-    }
+  if (!pd.processFloat(ticks, inbuf_.data(), pcm_buf)) {
+    ERR_PRINT("shit hit the fan");
+    return;
   }
 }
 

@@ -99,6 +99,9 @@ public:
   String get_patch_path();
   void set_patch_path(const String path);
 
+  // Send methods
+  void send_float(const String receiver, const float value);
+
 protected:
   static void _bind_methods();
 };

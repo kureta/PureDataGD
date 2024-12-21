@@ -1,21 +1,48 @@
-[gd_scene load_steps=3 format=3 uid="uid://cd6n3x3rx7yhb"]
+[gd_scene load_steps=9 format=3 uid="uid://cd6n3x3rx7yhb"]
 
-[sub_resource type="PlaceholderTexture2D" id="PlaceholderTexture2D_ppsk2"]
-size = Vector2(128, 128)
+[ext_resource type="Script" path="res://scripts/puredata.gd" id="1_e12a3"]
+[ext_resource type="Script" path="res://scripts/rotate.gd" id="1_rowrv"]
+[ext_resource type="Script" path="res://scripts/rotate2.gd" id="3_mje4p"]
+[ext_resource type="Script" path="res://scripts/other_pd.gd" id="3_tja1b"]
 
-[sub_resource type="AudioStreamPD" id="AudioStreamPD_maxlw"]
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e0rlg"]
+albedo_color = Color(1, 0, 1, 1)
+
+[sub_resource type="AudioStreamPD" id="AudioStreamPD_ebrt4"]
 patch_path = "res://patches/test.pd"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m0qes"]
+albedo_color = Color(1, 1, 0, 1)
+
+[sub_resource type="AudioStreamPD" id="AudioStreamPD_hvstd"]
+patch_path = "res://patches/test-2.pd"
 
 [node name="Main" type="Node3D"]
 
 [node name="Camera3D" type="Camera3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.481519, 0, 0.445752)
 
-[node name="Decal" type="Decal" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.323466, 0.567661, -0.737702)
-texture_albedo = SubResource("PlaceholderTexture2D_ppsk2")
+[node name="OmniLight3D" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0425498, 1.36524, -7.18585)
 
-[node name="AudioStreamPlayer3D" type="AudioStreamPlayer3D" parent="Decal"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.935843, -0.567661, -1.55439)
-stream = SubResource("AudioStreamPD_maxlw")
-autoplay = true
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+material = SubResource("StandardMaterial3D_e0rlg")
+script = ExtResource("1_rowrv")
+
+[node name="FixedFreq" type="AudioStreamPlayer3D" parent="CSGBox3D"]
+stream = SubResource("AudioStreamPD_ebrt4")
+volume_db = -12.0
+max_distance = 200.0
+script = ExtResource("1_e12a3")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -8)
+material = SubResource("StandardMaterial3D_m0qes")
+script = ExtResource("3_mje4p")
+
+[node name="VariableFreq" type="AudioStreamPlayer3D" parent="CSGBox3D2"]
+stream = SubResource("AudioStreamPD_hvstd")
+volume_db = -18.0
+max_distance = 200.0
+bus = &"Reverb"
+script = ExtResource("3_tja1b")
