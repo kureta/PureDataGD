@@ -1,5 +1,4 @@
 #include "puredatagd.h"
-#include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
@@ -140,11 +139,8 @@ void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
 // ============ AudioStreamPlaybackPD ============
 
 AudioStreamPlaybackPD::AudioStreamPlaybackPD() : active(false) {
-  // TODO Is locking actually required?
-  AudioServer::get_singleton()->lock();
   pcm_buffer = memalloc(PCM_BUFFER_SIZE);
   zeromem(pcm_buffer, PCM_BUFFER_SIZE);
-  AudioServer::get_singleton()->unlock();
 }
 
 AudioStreamPlaybackPD::~AudioStreamPlaybackPD() {
@@ -181,14 +177,16 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
   // Generate 16 bits PCM samples in "buf"
   zeromem(pcm_buffer, PCM_BUFFER_SIZE);
   auto *buf = (float *)pcm_buffer;
-  AudioServer::get_singleton()->lock();
   audioStream->gen_tone(buf, frames);
-  AudioServer::get_singleton()->unlock();
 
   // Convert samples to Godot format (floats in [-1; 1])
+  // TODO: locking might be necessary here because this is the only place
+  // where we modify a buffer that does not belong to us.
+  // AudioServer::get_singleton()->lock();
   for (int i = 0; i < frames; i++) {
     buffer[i] = {buf[i], buf[i]};
   }
+  // AudioServer::get_singleton()->unlock();
 
   return frames;
 }
