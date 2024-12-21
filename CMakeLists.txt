@@ -14,7 +14,6 @@ FetchContent_Declare(
   GIT_TAG 4.3  # Use the appropriate branch or tag matching your Godot version
 )
 # Fetch and make godot-cpp available
-FetchContent_MakeAvailable(godot-cpp)
 set(GODOT_PRECISION "double" CACHE STRING "Precision used in Godot" FORCE)
 
 if(CMAKE_BUILD_TYPE MATCHES "Debug")
@@ -24,6 +23,7 @@ endif()
 if(CMAKE_BUILD_TYPE MATCHES "Release")
   set(GODOT_USE_HOT_RELOAD OFF CACHE STRING "Enable hot  reloading" FORCE)
 endif()
+FetchContent_MakeAvailable(godot-cpp)
 
 # > ====== libpd ======
 set(MULTI_PATCH git apply ${CMAKE_CURRENT_SOURCE_DIR}/patches/libpd-multi.patch)
@@ -33,11 +33,11 @@ FetchContent_Declare(
   GIT_TAG master # Use an appropriate tag or branch
   PATCH_COMMAND ${MULTI_PATCH}
 )
-FetchContent_MakeAvailable(libpd)
 # LIBPD_STATIC does not compile on MSVC
 set(LIBPD_SHARED ON CACHE STRING "Build libpd as a shared library" FORCE)
 set(LIBPD_STATIC OFF CACHE STRING "Build libpd as a static library" FORCE)
 set(PD_MULTI ON CACHE STRING "Multiple instances" FORCE)
+FetchContent_MakeAvailable(libpd)
 
 # ====== Define and setup the target ======
 # Specify the source files
