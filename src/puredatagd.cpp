@@ -36,10 +36,9 @@ enum {
 
 // ============ AudioStreamPD ============
 
-// TODO: stereo doesn't work
-AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(false) {
-  int n_channels = stereo ? 2 : 1;
-  if (!pd_instance.init(1, n_channels, mix_rate)) {
+// NOTE: Hard coded mono input, stereo output
+AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE) {
+  if (!pd_instance.init(1, 2, mix_rate)) {
     ERR_PRINT("Failed to initialize PureData!");
     return;
   }
@@ -182,7 +181,8 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
   // where we modify a buffer that does not belong to us.
   // AudioServer::get_singleton()->lock();
   for (int i = 0; i < frames; i++) {
-    buffer[i] = {buf[i], buf[i]};
+    // copy interleaved
+    buffer[i] = {buf[i * 2], buf[i * 2 + 1]};
   }
   // AudioServer::get_singleton()->unlock();
 
