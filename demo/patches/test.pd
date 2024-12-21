@@ -1,5 +1,11 @@
-#N canvas 1069 690 450 300 12;
+#N canvas 3114 389 450 300 12;
 #X obj 142 78 osc~ 440;
 #X obj 129 175 dac~;
+#X obj 51 42 jump;
+#X obj 244 98 s jump;
+#X obj 264 16 bng 20 250 50 0 empty empty empty 0 -10 0 12 #fcfcfc #000000 #000000;
+#X obj 174 24 r trigger;
 #X connect 0 0 1 0;
 #X connect 0 0 1 1;
+#X connect 4 0 3 0;
+#X connect 5 0 3 0;

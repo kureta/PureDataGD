@@ -5,6 +5,12 @@
 
 using namespace godot;
 
+// TODO: Add error handling.
+// TODO: buffer size, block size, sampler rate, etc. should be configurable
+//       from Godot. Currently, somewhere in here or in libpd, the buffer
+//       is set to 25ms. If buffer set in the Generator in Godot is not exactly
+//       the same (or maybe higher) audio gets borked.
+
 // TODO: set and get via path_name but store FileAccess object as state.
 // Convert resource path String to a FileAccess object.
 Ref<FileAccess> resource_path_to_file(const String &path) {
@@ -28,7 +34,7 @@ enum {
   MIX_RATE = 48000,
   // A buffer of about 93ms (at 44100 mix rate)
   PCM_BUFFER_SIZE = 4096,
-  // TODO Document this (see core implementations). Note that 4096=2^13
+  // TODO: Document this (see core implementations). Note that 4096=2^13
   MIX_FRAC_BITS = 13
 };
 
@@ -37,29 +43,29 @@ enum {
 // TODO: stereo doesn't work
 AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(false), hz(639) {
   int n_channels = stereo ? 2 : 1;
-  if (!pd.init(1, n_channels, mix_rate)) {
+  if (!pd_instance.init(1, n_channels, mix_rate)) {
     ERR_PRINT("Failed to initialize PureData!");
     return;
   }
-  pd.computeAudio(false);
+  pd_instance.computeAudio(false);
   load_patch();
 }
 
 AudioStreamPD::~AudioStreamPD() {
-  pd.closePatch(patch);
+  pd_instance.closePatch(patch);
   patch.clear();
-  pd.computeAudio(false);
-  pd.clear();
+  pd_instance.computeAudio(false);
+  pd_instance.clear();
 }
 
 // TODO: Doppler effects sends in a `pitch_scale` parameter
 // It's our responsibility to use it to create the doppler effect (I guess)
 void AudioStreamPD::send_float(const String receiver, const float value) {
-  pd.sendFloat(receiver.utf8().get_data(), value);
+  pd_instance.sendFloat(receiver.utf8().get_data(), value);
 }
 
 void AudioStreamPD::send_bang(const String receiver) {
-  pd.sendBang(receiver.utf8().get_data());
+  pd_instance.sendBang(receiver.utf8().get_data());
 }
 
 void AudioStreamPD::send_list(const String receiver, const Array list) {
@@ -69,11 +75,11 @@ void AudioStreamPD::send_list(const String receiver, const Array list) {
     vec.addFloat(float(element));
   }
 
-  pd.sendList(receiver.utf8().get_data(), vec);
+  pd_instance.sendList(receiver.utf8().get_data(), vec);
 }
 
 void AudioStreamPD::send_symbol(const String receiver, const String value) {
-  pd.sendSymbol(receiver.utf8().get_data(), value.utf8().get_data());
+  pd_instance.sendSymbol(receiver.utf8().get_data(), value.utf8().get_data());
 }
 
 String AudioStreamPD::get_patch_path() { return patch_path; }
@@ -84,7 +90,7 @@ void AudioStreamPD::set_patch_path(const String path) {
   if (!file_exists(patch_path))
     return;
 
-  pd.closePatch(patch);
+  pd_instance.closePatch(patch);
   patch.clear();
   load_patch();
 
@@ -96,9 +102,11 @@ void AudioStreamPD::load_patch() {
   if (!file_exists(patch_path))
     return;
 
-  patch = pd.openPatch(
-      resource_path_to_file(patch_path)->get_path_absolute().utf8().get_data(),
-      "/");
+  Ref<FileAccess> file = resource_path_to_file(patch_path);
+  String absolute_path = file->get_path_absolute();
+
+  patch = pd_instance.openPatch(absolute_path.get_file().utf8().get_data(),
+                                absolute_path.get_base_dir().utf8().get_data());
   UtilityFunctions::print("load Set patch path to: ", patch_path);
 }
 
@@ -122,9 +130,9 @@ void AudioStreamPD::_bind_methods() {
 }
 
 void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
-  int ticks = size / pd.blockSize();
+  int ticks = size / pd_instance.blockSize();
 
-  if (!pd.processFloat(ticks, inbuf_.data(), pcm_buf)) {
+  if (!pd_instance.processFloat(ticks, inbuf_.data(), pcm_buf)) {
     ERR_PRINT("shit hit the fan");
     return;
   }
@@ -156,13 +164,13 @@ void AudioStreamPlaybackPD::_bind_methods() {
 void AudioStreamPlaybackPD::_start(double from_pos) {
   _seek(from_pos);
   active = true;
-  audioStream->pd.computeAudio(active);
+  audioStream->pd_instance.computeAudio(active);
 }
 
 void AudioStreamPlaybackPD::_stop() {
   active = false;
   audioStream->set_position(0);
-  audioStream->pd.computeAudio(active);
+  audioStream->pd_instance.computeAudio(active);
 }
 
 void AudioStreamPlaybackPD::_seek(double position) {
@@ -170,7 +178,7 @@ void AudioStreamPlaybackPD::_seek(double position) {
     position = 0;
   }
 
-  // TODO What does this mean? What is the unit of "position"?
+  // TODO: What does this mean? What is the unit of "position"?
   // Note that set_position expects "samples"
   audioStream->set_position(uint64_t(position * audioStream->mix_rate)
                             << MIX_FRAC_BITS);
@@ -182,7 +190,7 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
                                     int32_t frames) {
   ERR_FAIL_COND_V(!active, 0);
 
-  // TODO What is the max possible value for "frames"?
+  // TODO: What is the max possible value for "frames"?
   ERR_FAIL_COND_V(frames > PCM_BUFFER_SIZE, 0);
 
   // Generate 16 bits PCM samples in "buf"
@@ -199,16 +207,3 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
 
   return frames;
 }
-
-// TODO: PdBase object refers to a single static PureData instance.
-//       enable multi instance so that we can define different sources
-//       of positional audio.
-// TODO: I am extending the wrong class. Should extend AudioStreamGenerator
-//       Or in some other way I should be able to use pd patches in any
-//       audio node (2D, 3D, ...)
-// TODO: Redirect all stdout/stderr from libpd to Godot.
-// TODO: libpd cannot access/autoload other patches in the same directory.
-// TODO: buffer size, block size, sampler rate, etc. should be configurable
-//       from Godot. Currently, somewhere in here or in libpd, the buffer
-//       is set to 25ms. If buffer set in the Generator in Godot is not exactly
-//       the same (or maybe higher) audio gets borked.

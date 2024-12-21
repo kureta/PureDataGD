@@ -35,7 +35,7 @@ private:
   bool stereo;
   int hz;
 
-  pd::PdBase pd{};
+  pd::PdBase pd_instance{};
   pd::Patch patch{};
   String patch_path{};
   void load_patch();
