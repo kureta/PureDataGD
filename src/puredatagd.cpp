@@ -17,6 +17,7 @@ Ref<FileAccess> resource_path_to_file(const String &path) {
   return file;
 }
 
+// TODO: compile for Android.
 // Check if a resource exists
 bool file_exists(const String &path) {
   Ref<FileAccess> file = resource_path_to_file(path);
