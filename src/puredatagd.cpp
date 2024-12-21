@@ -34,8 +34,6 @@ enum {
   MIX_RATE = 48000,
   // A buffer of about 93ms (at 44100 mix rate)
   PCM_BUFFER_SIZE = 4096,
-  // TODO: Document this (see core implementations). Note that 4096=2^13
-  MIX_FRAC_BITS = 13
 };
 
 // ============ AudioStreamPD ============
@@ -117,8 +115,6 @@ Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {
   return playback;
 }
 
-void AudioStreamPD::set_position(uint64_t p) { pos = p; }
-
 // TODO: Add buffer size and sample rate as properties
 void AudioStreamPD::_bind_methods() {
   BIND_PROPERTY(AudioStreamPD, STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
@@ -162,30 +158,18 @@ void AudioStreamPlaybackPD::_bind_methods() {
 }
 
 void AudioStreamPlaybackPD::_start(double from_pos) {
-  _seek(from_pos);
   active = true;
   audioStream->pd_instance.computeAudio(active);
 }
 
 void AudioStreamPlaybackPD::_stop() {
   active = false;
-  audioStream->set_position(0);
   audioStream->pd_instance.computeAudio(active);
-}
-
-void AudioStreamPlaybackPD::_seek(double position) {
-  if (position < 0) {
-    position = 0;
-  }
-
-  // TODO: What does this mean? What is the unit of "position"?
-  // Note that set_position expects "samples"
-  audioStream->set_position(uint64_t(position * audioStream->mix_rate)
-                            << MIX_FRAC_BITS);
 }
 
 bool AudioStreamPlaybackPD::_is_playing() const { return active; }
 
+// TODO: tidy this up
 int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
                                     int32_t frames) {
   ERR_FAIL_COND_V(!active, 0);

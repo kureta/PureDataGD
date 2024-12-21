@@ -27,10 +27,6 @@ class AudioStreamPD : public AudioStream {
   friend class AudioStreamPlaybackPD;
 
 private:
-  // A position / phase of the signal to generate (unit: samples)
-  // TODO: Should this state be in Playback instead?
-  uint64_t pos;
-
   int mix_rate;
   bool stereo;
   int hz;
@@ -46,9 +42,6 @@ public:
   AudioStreamPD();
   ~AudioStreamPD() override;
   [[nodiscard]] Ref<AudioStreamPlayback> _instantiate_playback() const override;
-
-  // Set the current position / phase of the signal to generate (in samples)
-  void set_position(uint64_t pos);
 
   // Generate "size" PCM samples in "pcm_buf"
   void gen_tone(float *pcm_buf, int size);
@@ -93,7 +86,6 @@ public:
 
   [[nodiscard]] bool _is_playing() const override;
   void _start(double from_pos) override;
-  void _seek(double position) override;
   void _stop() override;
 
 protected:
