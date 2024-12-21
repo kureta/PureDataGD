@@ -5,13 +5,14 @@
 using namespace godot;
 
 // TODO: Tidy this up
+// TODO: compile for Android.
 // TODO: Add error handling.
-// TODO: buffer size, block size, sampler rate, etc. should be configurable
+// TODO: buffer size, block size, sample rate, etc. should be configurable
 //       from Godot. Currently, somewhere in here or in libpd, the buffer
 //       is set to 25ms. If buffer set in the Generator in Godot is not exactly
 //       the same (or maybe higher) audio gets borked.
+// TODO: Doppler effects sends in a `pitch_scale` parameter
 
-// TODO: set and get via path_name but store FileAccess object as state.
 // Convert resource path String to a FileAccess object.
 Ref<FileAccess> resource_path_to_file(const String &path) {
   Ref<FileAccess> file = FileAccess::open(path, FileAccess::READ);
@@ -19,18 +20,14 @@ Ref<FileAccess> resource_path_to_file(const String &path) {
   return file;
 }
 
-// TODO: compile for Android.
-// Check if a resource exists
+// Check if a resource file exists
 bool file_exists(const String &path) {
   Ref<FileAccess> file = resource_path_to_file(path);
   return file.is_valid();
 }
 
 enum {
-  // Native Godot sample rate (use AudioStreamPlaybackResampled for other
-  // values)
   MIX_RATE = 48000,
-  // A buffer of about 93ms (at 44100 mix rate)
   PCM_BUFFER_SIZE = 4096,
 };
 
@@ -52,7 +49,6 @@ AudioStreamPD::~AudioStreamPD() {
   pd_instance.clear();
 }
 
-// TODO: Doppler effects sends in a `pitch_scale` parameter
 // It's our responsibility to use it to create the doppler effect (I guess)
 void AudioStreamPD::send_float(const String receiver, const float value) {
   pd_instance.sendFloat(receiver.utf8().get_data(), value);
@@ -111,8 +107,8 @@ Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {
   return playback;
 }
 
-// TODO: Add buffer size and sample rate as properties
 void AudioStreamPD::_bind_methods() {
+  // TODO: Add buffer size and sample rate as properties
   BIND_PROPERTY(AudioStreamPD, STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
 
   BIND_METHOD(AudioStreamPD, send_float, "receiver", "float")
@@ -162,7 +158,6 @@ void AudioStreamPlaybackPD::_stop() {
 
 bool AudioStreamPlaybackPD::_is_playing() const { return active; }
 
-// TODO: tidy this up
 int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
                                     int32_t frames) {
   ERR_FAIL_COND_V(!active, 0);
@@ -175,9 +170,9 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
   auto *buf = (float *)pcm_buffer;
   audioStream->gen_tone(buf, frames);
 
-  // Convert samples to Godot format (floats in [-1; 1])
-  // TODO: locking might be necessary here because this is the only place
+  // NOTE: locking might be necessary here because this is the only place
   // where we modify a buffer that does not belong to us.
+
   // AudioServer::get_singleton()->lock();
   for (int i = 0; i < frames; i++) {
     // copy interleaved
