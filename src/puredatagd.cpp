@@ -43,7 +43,6 @@ AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE) {
     return;
   }
   pd_instance.computeAudio(false);
-  load_patch();
 }
 
 AudioStreamPD::~AudioStreamPD() {
