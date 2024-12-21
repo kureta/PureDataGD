@@ -30,8 +30,9 @@ set(MULTI_PATCH git apply ${CMAKE_CURRENT_SOURCE_DIR}/patches/libpd-multi.patch)
 FetchContent_Declare(
   libpd
   GIT_REPOSITORY https://github.com/libpd/libpd.git
-  GIT_TAG master # Use an appropriate tag or branch
+  GIT_TAG 39918e8 # Use an appropriate tag or branch
   PATCH_COMMAND ${MULTI_PATCH}
+  UPDATE_DISCONNECTED 1
 )
 # LIBPD_STATIC does not compile on MSVC
 set(LIBPD_SHARED ON CACHE STRING "Build libpd as a shared library" FORCE)
