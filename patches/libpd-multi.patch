@@ -1,0 +1,14 @@
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 583de2c..fc33156 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -223,9 +223,6 @@ set(LIBPD_OUTPUT_NAME     pd)
+ if (WIN32)
+     set(LIBPD_OUTPUT_NAME libpd)
+ endif()
+-if (PD_MULTI)
+-    set(LIBPD_OUTPUT_NAME ${LIBPD_OUTPUT_NAME}-multi)
+-endif()
+ 
+ # create final list of source files
+ set(SOURCE_FILES ${PD_SOURCES} ${LIBPD_SOURCES})

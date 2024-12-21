@@ -71,7 +71,7 @@ class AudioStreamPD : public AudioStream {
 
 private:
   // A position / phase of the signal to generate (unit: samples)
-  // TODO Should this state be in Playback instead?
+  // TODO: Should this state be in Playback instead?
   uint64_t pos;
 
   int mix_rate;
@@ -82,6 +82,7 @@ private:
   pd::Patch patch{};
   String patch_path{};
   void load_patch();
+  std::array<float, 1> inbuf_;
   std::array<float, 2048 * 2> outbuf_;
 
 public:

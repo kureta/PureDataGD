@@ -26,15 +26,18 @@ if(CMAKE_BUILD_TYPE MATCHES "Release")
 endif()
 
 # > ====== libpd ======
+set(MULTI_PATCH git apply ${CMAKE_CURRENT_SOURCE_DIR}/patches/libpd-multi.patch)
 FetchContent_Declare(
   libpd
   GIT_REPOSITORY https://github.com/libpd/libpd.git
   GIT_TAG master # Use an appropriate tag or branch
+  PATCH_COMMAND ${MULTI_PATCH}
 )
 FetchContent_MakeAvailable(libpd)
 # LIBPD_STATIC does not compile on MSVC
 set(LIBPD_SHARED ON CACHE STRING "Build libpd as a shared library" FORCE)
 set(LIBPD_STATIC OFF CACHE STRING "Build libpd as a static library" FORCE)
+set(PD_MULTI ON CACHE STRING "Multiple instances" FORCE)
 
 # ====== Define and setup the target ======
 # Specify the source files

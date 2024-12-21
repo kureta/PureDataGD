@@ -43,7 +43,7 @@ AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(true), hz(639) {
     ERR_PRINT("Failed to initialize PureData!");
     return;
   }
-  pd.computeAudio(false);
+  pd.computeAudio(true);
   load_patch();
 }
 
@@ -63,12 +63,14 @@ void AudioStreamPD::set_patch_path(const String path) {
 }
 
 void AudioStreamPD::load_patch() {
+  UtilityFunctions::print("load Trying to set path to: ", patch_path);
   if (!file_exists(patch_path))
     return;
 
   patch = pd.openPatch(
       resource_path_to_file(patch_path)->get_path_absolute().utf8().get_data(),
       "/");
+  UtilityFunctions::print("load Set patch path to: ", patch_path);
 }
 
 Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {
@@ -94,7 +96,15 @@ void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
   }
   pos += size;
 
-  // pd.processFloat(1, nullptr, outbuf_.data());
+  // TODO: There is an issue with threads!
+  if (file_exists(patch_path)) {
+    int ticks = size / pd.blockSize();
+
+    if (!pd.processFloat(ticks, inbuf_.data(), pcm_buf)) {
+      ERR_PRINT("shit hit the fan");
+      return;
+    }
+  }
 }
 
 #define zeromem(to, count) memset(to, 0, count)
@@ -155,7 +165,9 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
   // Generate 16 bits PCM samples in "buf"
   zeromem(pcm_buffer, PCM_BUFFER_SIZE);
   auto *buf = (float *)pcm_buffer;
+  AudioServer::get_singleton()->lock();
   audioStream->gen_tone(buf, frames);
+  AudioServer::get_singleton()->unlock();
 
   // Convert samples to Godot format (floats in [-1; 1])
   for (int i = 0; i < frames; i++) {
