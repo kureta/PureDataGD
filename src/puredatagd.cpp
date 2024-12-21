@@ -40,7 +40,7 @@ enum {
 // ============ AudioStreamPD ============
 
 // TODO: stereo doesn't work
-AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(false), hz(639) {
+AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE), stereo(false) {
   int n_channels = stereo ? 2 : 1;
   if (!pd_instance.init(1, n_channels, mix_rate)) {
     ERR_PRINT("Failed to initialize PureData!");

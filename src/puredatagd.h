@@ -29,7 +29,6 @@ class AudioStreamPD : public AudioStream {
 private:
   int mix_rate;
   bool stereo;
-  int hz;
 
   pd::PdBase pd_instance{};
   pd::Patch patch{};
