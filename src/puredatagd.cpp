@@ -23,8 +23,6 @@ Ref<FileAccess> resource_path_to_file(const String &path) {
 // Check if a resource exists
 bool file_exists(const String &path) {
   Ref<FileAccess> file = resource_path_to_file(path);
-  if (!file.is_valid())
-    ERR_PRINT(String("File does not exist: ") + path);
   return file.is_valid();
 }
 
