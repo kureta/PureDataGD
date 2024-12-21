@@ -2,11 +2,8 @@
 #define PUREDATAGD_H
 
 #include <PdBase.hpp>
-#include <PdTypes.hpp>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
-#include <godot_cpp/classes/audio_stream_player.hpp>
-#include <godot_cpp/variant/array.hpp>
 
 // Some macros
 #define BIND_METHOD(class, method_name, ...)                                   \
