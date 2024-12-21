@@ -5,6 +5,7 @@
 
 using namespace godot;
 
+// TODO: Tidy this up
 // TODO: Add error handling.
 // TODO: buffer size, block size, sampler rate, etc. should be configurable
 //       from Godot. Currently, somewhere in here or in libpd, the buffer
