@@ -13,7 +13,6 @@ void initialize_puredata_module(ModuleInitializationLevel p_level) {
     return;
   }
 
-  GDREGISTER_CLASS(PureDataGD);
   GDREGISTER_CLASS(AudioStreamPD);
   GDREGISTER_CLASS(AudioStreamPlaybackPD);
 }
