@@ -26,10 +26,8 @@ bool file_exists(const String &path) {
   return file.is_valid();
 }
 
-enum {
-  MIX_RATE = 48000,
-  PCM_BUFFER_SIZE = 4096,
-};
+#define MIX_RATE 48000
+#define PCM_BUFFER_SIZE 4096
 
 // ============ AudioStreamPD ============
 
