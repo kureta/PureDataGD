@@ -46,13 +46,13 @@ public:
 
   // Patch path
   String get_patch_path();
-  void set_patch_path(const String path);
+  void set_patch_path(const String &path);
 
   // Send methods
-  void send_float(const String receiver, const float value);
-  void send_bang(const String receiver);
-  void send_list(const String receiver, const Array list);
-  void send_symbol(const String receiver, const String value);
+  void send_float(const String &receiver, const float value);
+  void send_bang(const String &receiver);
+  void send_list(const String &receiver, const Array &list);
+  void send_symbol(const String &receiver, const String &value);
 
 protected:
   static void _bind_methods();

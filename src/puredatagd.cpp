@@ -39,15 +39,15 @@ AudioStreamPD::~AudioStreamPD() {
 }
 
 // It's our responsibility to use it to create the doppler effect (I guess)
-void AudioStreamPD::send_float(const String receiver, const float value) {
+void AudioStreamPD::send_float(const String &receiver, const float value) {
   pd_instance.sendFloat(receiver.utf8().get_data(), value);
 }
 
-void AudioStreamPD::send_bang(const String receiver) {
+void AudioStreamPD::send_bang(const String &receiver) {
   pd_instance.sendBang(receiver.utf8().get_data());
 }
 
-void AudioStreamPD::send_list(const String receiver, const Array list) {
+void AudioStreamPD::send_list(const String &receiver, const Array &list) {
   pd::List vec;
   for (int i = 0; i < list.size(); ++i) {
     Variant element = list[i];
@@ -57,13 +57,13 @@ void AudioStreamPD::send_list(const String receiver, const Array list) {
   pd_instance.sendList(receiver.utf8().get_data(), vec);
 }
 
-void AudioStreamPD::send_symbol(const String receiver, const String value) {
+void AudioStreamPD::send_symbol(const String &receiver, const String &value) {
   pd_instance.sendSymbol(receiver.utf8().get_data(), value.utf8().get_data());
 }
 
 String AudioStreamPD::get_patch_path() { return patch_path; }
 
-void AudioStreamPD::set_patch_path(const String path) {
+void AudioStreamPD::set_patch_path(const String &path) {
   UtilityFunctions::print("Trying to set path to: ", path);
   patch_path = path;
   if (!file_exists(patch_path))
