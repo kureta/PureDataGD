@@ -3,6 +3,11 @@
 
 using namespace godot;
 
+#define MIX_RATE 48000
+#define PCM_BUFFER_SIZE 4096
+
+#define print UtilityFunctions::print
+
 struct FileInfo {
   std::string name;
   std::string path;
@@ -17,9 +22,6 @@ FileInfo parse_file_info(const Ref<FileAccess> file) {
 
   return file_info;
 }
-
-#define MIX_RATE 48000
-#define PCM_BUFFER_SIZE 4096
 
 // ============ AudioStreamPD ============
 
@@ -69,30 +71,26 @@ String AudioStreamPD::get_patch_path() {
 }
 
 void AudioStreamPD::set_patch_path(const String &path) {
-  UtilityFunctions::print("Trying to set path to: ", path);
+  print("Trying to set patch path to: ", path);
   patch_file = FileAccess::open(path, FileAccess::READ);
-  if (!patch_file.is_valid())
+  if (!patch_file.is_valid()) {
+    WARN_PRINT("Set path but it is not a valid pd patch.");
     return;
+  }
 
   pd_instance.closePatch(patch);
   patch.clear();
   load_patch();
 
-  UtilityFunctions::print("Set patch path to: ", patch_file->get_path());
+  print("Loaded pd patch: ", patch_file->get_path());
 }
 
 void AudioStreamPD::load_patch() {
   if (!patch_file.is_valid())
     return;
 
-  UtilityFunctions::print("load Trying to set path to: ",
-                          patch_file->get_path());
-
   FileInfo file_info = parse_file_info(patch_file);
   patch = pd_instance.openPatch(file_info.name, file_info.path);
-
-  UtilityFunctions::print("is valid?: ", patch.isValid());
-  UtilityFunctions::print("load Set patch path to: ", patch_file->get_path());
 }
 
 Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {
@@ -115,7 +113,7 @@ void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
   int ticks = size / pd_instance.blockSize();
 
   if (!pd_instance.processFloat(ticks, inbuf_.data(), pcm_buf)) {
-    ERR_PRINT("shit hit the fan");
+    ERR_PRINT("PureData process borked!");
     return;
   }
 }
@@ -155,7 +153,6 @@ bool AudioStreamPlaybackPD::_is_playing() const { return active; }
 int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
                                     int32_t frames) {
   ERR_FAIL_COND_V(!active, 0);
-
   ERR_FAIL_COND_V(frames > PCM_BUFFER_SIZE, 0);
 
   // Generate 16 bits PCM samples in "buf"
