@@ -4,15 +4,6 @@
 
 using namespace godot;
 
-// TODO: Tidy this up
-// TODO: compile for Android.
-// TODO: Add error handling.
-// TODO: buffer size, block size, sample rate, etc. should be configurable
-//       from Godot. Currently, somewhere in here or in libpd, the buffer
-//       is set to 25ms. If buffer set in the Generator in Godot is not exactly
-//       the same (or maybe higher) audio gets borked.
-// TODO: Doppler effects sends in a `pitch_scale` parameter
-
 // Convert resource path String to a FileAccess object.
 Ref<FileAccess> resource_path_to_file(const String &path) {
   Ref<FileAccess> file = FileAccess::open(path, FileAccess::READ);
@@ -106,7 +97,6 @@ Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {
 }
 
 void AudioStreamPD::_bind_methods() {
-  // TODO: Add buffer size and sample rate as properties
   BIND_PROPERTY(AudioStreamPD, STRING, patch_path, PROPERTY_HINT_FILE, "*.pd")
 
   BIND_METHOD(AudioStreamPD, send_float, "receiver", "float")
@@ -160,7 +150,6 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
                                     int32_t frames) {
   ERR_FAIL_COND_V(!active, 0);
 
-  // TODO: What is the max possible value for "frames"?
   ERR_FAIL_COND_V(frames > PCM_BUFFER_SIZE, 0);
 
   // Generate 16 bits PCM samples in "buf"
