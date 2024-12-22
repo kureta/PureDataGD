@@ -20,6 +20,8 @@
       PropertyInfo(Variant::type, #property_name, hint_type, hint_string),     \
       "set_" #property_name, "get_" #property_name);
 
+#define PCM_BUFFER_SIZE 4096
+
 namespace godot {
 
 class AudioStreamPD : public AudioStream {
@@ -34,8 +36,7 @@ private:
   pd::Patch patch{};
   Ref<FileAccess> patch_file{};
   void load_patch();
-  std::array<float, 1> inbuf_;
-  std::array<float, 2048 * 2> outbuf_;
+  std::array<float, 1> dummy_inbuf;
 
 public:
   AudioStreamPD();
@@ -68,7 +69,7 @@ private:
   Ref<AudioStreamPD>
       audioStream; // Keep track of the AudioStream which instantiated us
   bool active;     // Are we currently playing?
-  void *pcm_buffer;
+  float *pcm_buffer = new float[PCM_BUFFER_SIZE];
 
 public:
   AudioStreamPlaybackPD();

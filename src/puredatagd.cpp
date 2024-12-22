@@ -1,10 +1,10 @@
 #include "puredatagd.h"
+#include <cstring>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
 #define MIX_RATE 48000
-#define PCM_BUFFER_SIZE 4096
 
 #define print UtilityFunctions::print
 
@@ -112,7 +112,7 @@ void AudioStreamPD::_bind_methods() {
 void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
   int ticks = size / pd_instance.blockSize();
 
-  if (!pd_instance.processFloat(ticks, inbuf_.data(), pcm_buf)) {
+  if (!pd_instance.processFloat(ticks, dummy_inbuf.data(), pcm_buf)) {
     ERR_PRINT("PureData process borked!");
     return;
   }
@@ -123,7 +123,6 @@ void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
 #define zeromem(to, count) memset(to, 0, count)
 
 AudioStreamPlaybackPD::AudioStreamPlaybackPD() : active(false) {
-  pcm_buffer = memalloc(PCM_BUFFER_SIZE);
   zeromem(pcm_buffer, PCM_BUFFER_SIZE);
 }
 
@@ -155,20 +154,11 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
   ERR_FAIL_COND_V(!active, 0);
   ERR_FAIL_COND_V(frames > PCM_BUFFER_SIZE, 0);
 
-  // Generate 16 bits PCM samples in "buf"
-  zeromem(pcm_buffer, PCM_BUFFER_SIZE);
-  auto *buf = (float *)pcm_buffer;
-  audioStream->gen_tone(buf, frames);
+  audioStream->gen_tone(pcm_buffer, frames);
 
-  // NOTE: locking might be necessary here because this is the only place
-  // where we modify a buffer that does not belong to us.
-
-  // AudioServer::get_singleton()->lock();
-  for (int i = 0; i < frames; i++) {
-    // copy interleaved
-    buffer[i] = {buf[i * 2], buf[i * 2 + 1]};
-  }
-  // AudioServer::get_singleton()->unlock();
+  // output buffer of pd is interleaved, AudioFrame is a struct {left, right}
+  // so copying the buffer directly on the array of AudioFrames works out
+  memcpy(buffer, pcm_buffer, 2 * frames * sizeof(float));
 
   return frames;
 }
