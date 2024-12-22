@@ -126,9 +126,9 @@ void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
   }
 }
 
-#define zeromem(to, count) memset(to, 0, count)
-
 // ============ AudioStreamPlaybackPD ============
+
+#define zeromem(to, count) memset(to, 0, count)
 
 AudioStreamPlaybackPD::AudioStreamPlaybackPD() : active(false) {
   pcm_buffer = memalloc(PCM_BUFFER_SIZE);
