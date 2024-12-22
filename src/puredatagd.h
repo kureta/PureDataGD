@@ -4,6 +4,7 @@
 #include <PdBase.hpp>
 #include <godot_cpp/classes/audio_stream.hpp>
 #include <godot_cpp/classes/audio_stream_playback.hpp>
+#include <godot_cpp/classes/file_access.hpp>
 
 // Some macros
 #define BIND_METHOD(class, method_name, ...)                                   \
@@ -31,7 +32,7 @@ private:
 
   pd::PdBase pd_instance{};
   pd::Patch patch{};
-  String patch_path{};
+  Ref<FileAccess> patch_file{};
   void load_patch();
   std::array<float, 1> inbuf_;
   std::array<float, 2048 * 2> outbuf_;

@@ -1,20 +1,21 @@
 #include "puredatagd.h"
-#include <godot_cpp/classes/file_access.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
 
-// Convert resource path String to a FileAccess object.
-Ref<FileAccess> resource_path_to_file(const String &path) {
-  Ref<FileAccess> file = FileAccess::open(path, FileAccess::READ);
+struct FileInfo {
+  std::string name;
+  std::string path;
+};
 
-  return file;
-}
+// PureData needs file name and path separately for loading
+FileInfo parse_file_info(const Ref<FileAccess> file) {
+  String absolute_path = file->get_path_absolute();
 
-// Check if a resource file exists
-bool file_exists(const String &path) {
-  Ref<FileAccess> file = resource_path_to_file(path);
-  return file.is_valid();
+  FileInfo file_info = {absolute_path.get_file().utf8().get_data(),
+                        absolute_path.get_base_dir().utf8().get_data()};
+
+  return file_info;
 }
 
 #define MIX_RATE 48000
@@ -38,7 +39,6 @@ AudioStreamPD::~AudioStreamPD() {
   pd_instance.clear();
 }
 
-// It's our responsibility to use it to create the doppler effect (I guess)
 void AudioStreamPD::send_float(const String &receiver, const float value) {
   pd_instance.sendFloat(receiver.utf8().get_data(), value);
 }
@@ -61,32 +61,38 @@ void AudioStreamPD::send_symbol(const String &receiver, const String &value) {
   pd_instance.sendSymbol(receiver.utf8().get_data(), value.utf8().get_data());
 }
 
-String AudioStreamPD::get_patch_path() { return patch_path; }
+String AudioStreamPD::get_patch_path() {
+  if (!patch_file.is_valid())
+    return "";
+
+  return patch_file->get_path();
+}
 
 void AudioStreamPD::set_patch_path(const String &path) {
   UtilityFunctions::print("Trying to set path to: ", path);
-  patch_path = path;
-  if (!file_exists(patch_path))
+  patch_file = FileAccess::open(path, FileAccess::READ);
+  if (!patch_file.is_valid())
     return;
 
   pd_instance.closePatch(patch);
   patch.clear();
   load_patch();
 
-  UtilityFunctions::print("Set patch path to: ", patch_path);
+  UtilityFunctions::print("Set patch path to: ", patch_file->get_path());
 }
 
 void AudioStreamPD::load_patch() {
-  UtilityFunctions::print("load Trying to set path to: ", patch_path);
-  if (!file_exists(patch_path))
+  if (!patch_file.is_valid())
     return;
 
-  Ref<FileAccess> file = resource_path_to_file(patch_path);
-  String absolute_path = file->get_path_absolute();
+  UtilityFunctions::print("load Trying to set path to: ",
+                          patch_file->get_path());
 
-  patch = pd_instance.openPatch(absolute_path.get_file().utf8().get_data(),
-                                absolute_path.get_base_dir().utf8().get_data());
-  UtilityFunctions::print("load Set patch path to: ", patch_path);
+  FileInfo file_info = parse_file_info(patch_file);
+  patch = pd_instance.openPatch(file_info.name, file_info.path);
+
+  UtilityFunctions::print("is valid?: ", patch.isValid());
+  UtilityFunctions::print("load Set patch path to: ", patch_file->get_path());
 }
 
 Ref<AudioStreamPlayback> AudioStreamPD::_instantiate_playback() const {

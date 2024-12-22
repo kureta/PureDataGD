@@ -14,7 +14,7 @@ patch_path = "res://patches/test.pd"
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m0qes"]
 albedo_color = Color(1, 1, 0, 1)
 
-[sub_resource type="AudioStreamPD" id="AudioStreamPD_hvstd"]
+[sub_resource type="AudioStreamPD" id="AudioStreamPD_siji2"]
 patch_path = "res://patches/test-2.pd"
 
 [node name="Main" type="Node3D"]
@@ -41,7 +41,7 @@ material = SubResource("StandardMaterial3D_m0qes")
 script = ExtResource("3_mje4p")
 
 [node name="VariableFreq" type="AudioStreamPlayer3D" parent="CSGBox3D2"]
-stream = SubResource("AudioStreamPD_hvstd")
+stream = SubResource("AudioStreamPD_siji2")
 volume_db = -18.0
 max_distance = 200.0
 bus = &"Reverb"
