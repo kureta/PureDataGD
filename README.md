@@ -23,3 +23,4 @@
 - [ ] Do something with `pitch_scale` parameter sent from Godot for Doppler effect.
 - [ ] Better understand the `_mix` method and its arguments.
 - [ ] See if/where `AudioServer::get_singleton()->lock();` is really necessary.
+- [ ] Improve log messages
