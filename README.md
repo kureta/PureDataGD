@@ -19,6 +19,7 @@
 - [ ] Add error handling
 - [ ] Remove hard-coded buffer size, block size, sample rate, etc.
       and make them all configurable from within the Godot editor.
+      We should get the sample rate from Godot.
 - [ ] Do something with `pitch_scale` parameter sent from Godot for Doppler effect.
 - [ ] Better understand the `_mix` method and its arguments.
 - [ ] See if/where `AudioServer::get_singleton()->lock();` is really necessary.
