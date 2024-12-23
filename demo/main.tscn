@@ -2,13 +2,15 @@
 
 [ext_resource type="Script" path="res://scripts/puredata.gd" id="1_e12a3"]
 [ext_resource type="Script" path="res://scripts/rotate.gd" id="1_rowrv"]
-[ext_resource type="Script" path="res://scripts/rotate2.gd" id="3_mje4p"]
 [ext_resource type="Script" path="res://scripts/other_pd.gd" id="3_tja1b"]
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_e0rlg"]
 albedo_color = Color(1, 0, 1, 1)
 
-[sub_resource type="AudioStreamPD" id="AudioStreamPD_ebrt4"]
+[sub_resource type="AudioStreamPD" id="AudioStreamPD_00ipg"]
+patch_path = "res://patches/test.pd"
+
+[sub_resource type="AudioStreamPD" id="AudioStreamPD_27kkm"]
 patch_path = "res://patches/test.pd"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m0qes"]
@@ -30,19 +32,34 @@ material = SubResource("StandardMaterial3D_e0rlg")
 script = ExtResource("1_rowrv")
 
 [node name="FixedFreq" type="AudioStreamPlayer3D" parent="CSGBox3D"]
-stream = SubResource("AudioStreamPD_ebrt4")
-volume_db = -12.0
+stream = SubResource("AudioStreamPD_00ipg")
+volume_db = -16.0
+max_distance = 200.0
+script = ExtResource("1_e12a3")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -10)
+material = SubResource("StandardMaterial3D_e0rlg")
+script = ExtResource("1_rowrv")
+r = 10.0
+f = -0.4
+
+[node name="FixedFreq" type="AudioStreamPlayer3D" parent="CSGBox3D3"]
+stream = SubResource("AudioStreamPD_27kkm")
+volume_db = -16.0
 max_distance = 200.0
 script = ExtResource("1_e12a3")
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 10, 0, -8)
 material = SubResource("StandardMaterial3D_m0qes")
-script = ExtResource("3_mje4p")
+script = ExtResource("1_rowrv")
+r = 10.0
+f = 0.33
 
 [node name="VariableFreq" type="AudioStreamPlayer3D" parent="CSGBox3D2"]
 stream = SubResource("AudioStreamPD_siji2")
-volume_db = -18.0
+volume_db = -16.0
 max_distance = 200.0
 bus = &"Reverb"
 script = ExtResource("3_tja1b")

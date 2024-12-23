@@ -1,8 +1,8 @@
 extends CSGBox3D
 
 var t = 0
-var r = 10
-var f = 0.125
+@export var r: float = 100
+@export var f: float = 0.125
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
