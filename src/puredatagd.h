@@ -69,7 +69,7 @@ private:
   Ref<AudioStreamPD>
       audioStream; // Keep track of the AudioStream which instantiated us
   bool active;     // Are we currently playing?
-  float *pcm_buffer = new float[PCM_BUFFER_SIZE];
+  void *pcm_buffer;
 
 public:
   AudioStreamPlaybackPD();

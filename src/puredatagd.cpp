@@ -125,7 +125,10 @@ void AudioStreamPD::gen_tone(float *pcm_buf, int size) {
 #define zeromem(to, count) memset(to, 0, count)
 
 AudioStreamPlaybackPD::AudioStreamPlaybackPD() : active(false) {
+  AudioServer::get_singleton()->lock();
+  pcm_buffer = memalloc(PCM_BUFFER_SIZE);
   zeromem(pcm_buffer, PCM_BUFFER_SIZE);
+  AudioServer::get_singleton()->unlock();
 }
 
 AudioStreamPlaybackPD::~AudioStreamPlaybackPD() {
@@ -156,11 +159,13 @@ int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
   ERR_FAIL_COND_V(!active, 0);
   ERR_FAIL_COND_V(frames > PCM_BUFFER_SIZE, 0);
 
-  audioStream->gen_tone(pcm_buffer, frames);
+  zeromem(pcm_buffer, PCM_BUFFER_SIZE);
+  auto *buf = (float *)pcm_buffer;
+  audioStream->gen_tone(buf, frames);
 
   // output buffer of pd is interleaved, AudioFrame is a struct {left, right}
   // so copying the buffer directly on the array of AudioFrames works out
-  memcpy(buffer, pcm_buffer, 2 * frames * sizeof(float));
+  memcpy(buffer, buf, 2 * frames * sizeof(float));
 
   return frames;
 }
