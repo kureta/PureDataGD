@@ -18,4 +18,3 @@ config/icon="res://icon.svg"
 [audio]
 
 driver/output_latency=5
-driver/mix_rate=48000

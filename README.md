@@ -17,7 +17,7 @@
 - [ ] Tidy up the code. Make it more readable
 - [ ] Create a better demo Godot project
 - [ ] Add error handling
-- [ ] Remove hard-coded buffer size, block size, sample rate, etc.
+- [x] Remove hard-coded buffer size, block size, sample rate, etc.
       and make them all configurable from within the Godot editor.
       We should get the sample rate from Godot.
 - [ ] Do something with `pitch_scale` parameter sent from Godot for Doppler effect.

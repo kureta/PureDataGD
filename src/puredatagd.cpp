@@ -1,5 +1,6 @@
 #include "puredatagd.h"
 #include <cstring>
+#include <godot_cpp/classes/audio_server.hpp>
 #include <godot_cpp/variant/utility_functions.hpp>
 
 using namespace godot;
@@ -27,6 +28,7 @@ FileInfo parse_file_info(const Ref<FileAccess> file) {
 
 // NOTE: Hard coded mono input, stereo output
 AudioStreamPD::AudioStreamPD() : mix_rate(MIX_RATE) {
+  mix_rate = AudioServer::get_singleton()->get_mix_rate();
   if (!pd_instance.init(1, 2, mix_rate)) {
     ERR_PRINT("Failed to initialize PureData!");
     return;
