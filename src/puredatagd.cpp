@@ -142,7 +142,7 @@ void AudioStreamPlaybackPD::_bind_methods() {
   // Required by GDCLASS macro
 }
 
-void AudioStreamPlaybackPD::_start(double from_pos) {
+void AudioStreamPlaybackPD::_start([[maybe_unused]] double from_pos) {
   active = true;
   audioStream->pd_instance.computeAudio(active);
 }
@@ -154,7 +154,8 @@ void AudioStreamPlaybackPD::_stop() {
 
 bool AudioStreamPlaybackPD::_is_playing() const { return active; }
 
-int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer, float rate_scale,
+int32_t AudioStreamPlaybackPD::_mix(AudioFrame *buffer,
+                                    [[maybe_unused]] float rate_scale,
                                     int32_t frames) {
   ERR_FAIL_COND_V(!active, 0);
   ERR_FAIL_COND_V(frames > PCM_BUFFER_SIZE, 0);
