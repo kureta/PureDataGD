@@ -56,16 +56,22 @@ set_target_properties(PureDataGD PROPERTIES
 
 # ===== Include directories =====
 # Include directories for godot-cpp
-target_include_directories(PureDataGD PRIVATE
+target_include_directories(PureDataGD SYSTEM PRIVATE
   ${godot-cpp_SOURCE_DIR}/include
   ${godot-cpp_BINARY_DIR}/include
 )
 # Include directories for libpd
-target_include_directories(PureDataGD PRIVATE
+target_include_directories(PureDataGD SYSTEM PRIVATE
   ${libpd_SOURCE_DIR}/cpp
   ${libpd_SOURCE_DIR}/libpd_wrapper
   ${libpd_SOURCE_DIR}/libpd_wrapper/util
   ${libpd_SOURCE_DIR}/pure-data/src
+)
+
+target_compile_options(PureDataGD PRIVATE
+  -Wall -Wextra -Werror -pedantic -Wshadow -Wconversion
+  -fsanitize=address -fsanitize=undefined -Weffc++
+  -fstack-protector-strong -D_GLIBCXX_DEBUG -std=c++17
 )
 
 # ===== Link libraries =====
