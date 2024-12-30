@@ -8,16 +8,16 @@
 albedo_color = Color(1, 0, 1, 1)
 
 [sub_resource type="AudioStreamPD" id="AudioStreamPD_00ipg"]
-patch_path = "res://patches/test.pd"
+patch_path = "./patches/test.pd"
 
 [sub_resource type="AudioStreamPD" id="AudioStreamPD_27kkm"]
-patch_path = "res://patches/test.pd"
+patch_path = "./patches/test.pd"
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_m0qes"]
 albedo_color = Color(1, 1, 0, 1)
 
 [sub_resource type="AudioStreamPD" id="AudioStreamPD_siji2"]
-patch_path = "res://patches/test-2.pd"
+patch_path = "./patches/test-2.pd"
 
 [node name="Main" type="Node3D"]
 
